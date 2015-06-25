@@ -3,7 +3,7 @@ layout: post
 title: "How do imports work in Tornado templates"
 description: "How do imports work in Tornado templates"
 category: "tornado"
-tags: [tornado]
+tags: []
 ---
 {% include JB/setup %}
 <ul>
