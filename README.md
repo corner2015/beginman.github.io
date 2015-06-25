@@ -1,1 +1,3 @@
-寞踪的技术博客
+=======
+# beginman.github.io
+beginman.cn
