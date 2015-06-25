@@ -201,7 +201,7 @@ app = tornado.web.Application(
 </ul>
 
 <blockquote>
-  <p>默认情况下，所有的模板输出的时候都会使用 <code>tornado.escape.xhtml_escape</code> 函数加密。这个行为可以通过传递 <code>autoescape=None</code> 给 Application 设置或者 <code>tornado.template.Loader</code> 的构造函数来关闭，也可以使用 <code>`{% autoescape None %}`</code> 命令仅在某个模板文件中关闭该功能，或者使用 <code>`{% raw ...%}`</code> 替换 <code>`{{ ... }}`</code> 从而在某个单独的表达式中关闭该功能。</p>
+  <p>默认情况下，所有的模板输出的时候都会使用 <code>tornado.escape.xhtml_escape</code> 函数加密。这个行为可以通过传递 <code>autoescape=None</code> 给 Application 设置或者 <code>tornado.template.Loader</code> 的构造函数来关闭，也可以使用 <code>`autoescape None`</code> 命令仅在某个模板文件中关闭该功能，或者使用 <code>`raw`</code> 替换  从而在某个单独的表达式中关闭该功能。</p>
 </blockquote>
 
 <p>Tornado自动的模板加密有助于避免 XSS 漏洞,但并非一劳永逸，关于tornado安全性将会在后期进行总结。</p>
