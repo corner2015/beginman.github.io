@@ -1,0 +1,3993 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+    <title>寞踪的技术博客</title>
+    <link href="http://xpmozong.github.io/" rel="self"/>
+    <link href="http://xpmozong.github.io"/>
+    <updated>2015-03-09T17:36:11+08:00</updated>
+    <id>http://xpmozong.github.io</id>
+    <author>
+    <name>寞踪</name>
+    <email>xp.mozong@gmail.com</email>
+    </author>
+
+
+    <entry>
+        <title>iOS 图文混排</title>
+        <link href="http://xpmozong.github.io/ios/2014/12/21/ios-tuwenhunpai"/>
+        <updated>2014-12-21T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios/2014/12/21/ios-tuwenhunpai</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios/2014/12/21/ios-tuwenhunpai/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1、M80AttributedLabel的URL、号码、邮箱的正则匹配不是很好，我做了一些修改。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#pragma mark - 正则匹配电话号码，网址链接，Email地址
++ (NSArray *)addRexArr:(NSString *)text
+{
+    NSString *parten = @&quot;\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{4}-\\d{7}|1+[358]+\\d{9}|\\d{8}|\\d{7}&quot;;
+    NSArray *resultArray = [text componentsMatchedByRegex:parten];
+    NSMutableArray *phoneArray = [[NSMutableArray alloc] initWithArray:resultArray];
+    NSMutableArray *urlArray = [[NSMutableArray alloc] init];
+    NSMutableArray *emailArray = [[NSMutableArray alloc] init];
+    
+    NSString *parten4 = @&quot;[^\\s]*(\\.)(com|cn|net|org|biz|info|cc|tv|name|中国|mobi|me|asia|co|so|tel)[a-zA-Z\\d\\/]*&quot;;
+    NSArray *resultArray4 = [text componentsMatchedByRegex:parten4];
+    for (NSString *str in resultArray4) {
+        BOOL isMatch = NO;
+        
+        NSString *parten3 = @&quot;(https?)+://[^\\s]*[a-zA-Z\\d\\.]*(\\.)(com|cn|net)[a-zA-Z\\d\\/]*&quot;;
+        NSArray *resultArray3 = [str componentsMatchedByRegex:parten3];
+        for (NSString *s in resultArray3) {
+            isMatch = YES;
+            [urlArray addObject:s];
+        }
+        
+        NSString *parten2 = @&quot;(www\\.)[^\\s]*(\\.)(com|cn|net|org|biz|info|cc|tv|name|中国|mobi|me|asia|co|so|tel)[a-zA-Z\\d\\/]*&quot;;
+        NSArray *resultArray2 = [str componentsMatchedByRegex:parten2];
+        for (NSString *s in resultArray2) {
+            isMatch = YES;
+            [urlArray addObject:s];
+        }
+        
+        NSString *parten4 = @&quot;[^\\s]*[a-zA-Z\\d\\.]*(@)[a-z\\d]*(\\.)(com|cn|net|org|biz|info|cc|tv|name|mobi|me|asia|co|so|tel)&quot;;
+        NSArray *resultArray4 = [str componentsMatchedByRegex:parten4];
+        for (NSString *s in resultArray4) {
+            isMatch = YES;
+            [emailArray addObject:s];
+        }
+        
+        if (isMatch == NO) {
+            [urlArray addObject:str];
+        }
+        
+        for (NSString *p in resultArray) {
+            NSArray *resultArray3 = [str componentsMatchedByRegex:p];
+            if ([resultArray3 count] &amp;gt; 0) {
+                [phoneArray removeObject:p];
+            }
+        }
+    }
+
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    [array addObject:urlArray];
+    [array addObject:phoneArray];
+    [array addObject:emailArray];
+    
+    return array;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;调用的时候，如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NSArray *rexArray = [M80AttributedLabel addRexArr:label.labelText];
+NSArray *httpArr = [rexArray objectAtIndex:0];
+NSArray *phoneNumArr = [rexArray objectAtIndex:1];
+NSArray *emailArr = [rexArray objectAtIndex:2];
+if ([emailArr count]) {
+    for (NSString *emailStr in emailArr) {
+        [label addCustomLink:[NSURL URLWithString:emailStr] forRange:[label.labelText rangeOfString:emailStr] linkType:LinkTypeEmail];
+    }
+}
+if ([phoneNumArr count]) {
+    for (NSString *phoneNum in phoneNumArr) {
+        [label addCustomLink:[NSURL URLWithString:phoneNum] forRange:[label.labelText rangeOfString:phoneNum] linkType:LinkTypePhone];
+    }
+}
+if ([httpArr count]) {
+    for (NSString *httpStr in httpArr) {
+        [label addCustomLink:[NSURL URLWithString:httpStr] forRange:[label.labelText rangeOfString:httpStr] linkType:LinkTypeURL];
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、还有表情的添加，原来只能单个加图片，如果图文都有，比如：开心哦[大笑]，哦也！   其中[大笑]是一个笑的图片。如何分割显示呢？&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NSRegularExpression *regex = [[NSRegularExpression alloc]
+                              initWithPattern:@&quot;(.*?)(\\[*+\\]|\\Z)&quot;
+                              options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSeparators
+                              error:nil];
+NSArray* chunks = [regex matchesInString:text options:0
+                                   range:NSMakeRange(0, [text length])];
+for (NSTextCheckingResult *b in chunks) {
+    NSString *bstr = [text substringWithRange:b.range];
+    if (bstr.length &amp;gt; 0) {
+        NSString *imgName = [_m_emojiDictionary objectForKey:bstr];
+        if (imgName) {
+            UIImage *image = [UIImage imageNamed:imgName];
+            [label appendImage:image
+                       maxSize:CGSizeMake(24, 24)
+                        margin:UIEdgeInsetsZero
+                     alignment:M80ImageAlignmentCenter];
+        }else{
+            NSArray *array = [bstr componentsSeparatedByString:@&quot;[&quot;];
+            int i = 0;
+            for (NSString *str in array) {
+                if (i == 0) {
+                    [label appendText:str];
+                }else{
+                    NSString *astr = [NSString stringWithFormat:@&quot;[%@&quot;, str];
+                    NSString *imgName = [_m_emojiDictionary objectForKey:astr];
+                    if (imgName) {
+                        UIImage *image = [UIImage imageNamed:imgName];
+                        [label appendImage:image
+                                   maxSize:CGSizeMake(24, 24)
+                                    margin:UIEdgeInsetsZero
+                                 alignment:M80ImageAlignmentCenter];
+                    }else{
+                        [label appendText:astr];
+                    }
+                }
+                i++;
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;详情代码参考，&lt;a href=&quot;https://github.com/xpmozong/Socket&quot; target=&quot;_blank&quot;&gt;https://github.com/xpmozong/Socket&lt;/a&gt;，WeiWei这个项目。&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>iOS FMDB Sqlite封装</title>
+        <link href="http://xpmozong.github.io/ios/2014/11/05/ios-fmdb-sqlite"/>
+        <updated>2014-11-05T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios/2014/11/05/ios-fmdb-sqlite</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios/2014/11/05/ios-fmdb-sqlite/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1、在使用FMDB的时候，总是出现崩溃的情况，报错信息总是提示某某表被锁住。为了解决这一问题，我做了封装。&lt;/p&gt;
+
+&lt;p&gt;DBConnect.h如下:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &amp;lt;Foundation/Foundation.h&amp;gt;
+#import &quot;FMDB.h&quot;
+#import &quot;FMResultSet.h&quot;
+
+@interface DBConnect : NSObject
+
+@property (nonatomic, retain) FMDatabase *dataBase;  // 数据库类
+@property (nonatomic, retain) FMDatabaseQueue *dbQueue;
+
+/// 通过单例的方式
++ (DBConnect *)shareConnect;
+
+/// 打开数据库
+- (void)openDatabase;
+
+/// 判断是否存在表
+- (BOOL)isTableOK:(NSString *)tableName;
+
+/// 创建表
+- (BOOL)createTableSql:(NSString *)sql;
+
+/// 获得数据
+- (NSArray *)getDBlist:(NSString *)sql;
+
+/// 获得单条数据
+- (NSDictionary *)getDBOneData:(NSString *)sql;
+
+/// 统计数量
+- (int)getDBDataCount:(NSString *)sql;
+
+/// 执行sql (主要用来执行插入操作)
+- (unsigned)executeInsertSql:(NSString *)sql;
+
+/// 更新操作，删除操作
+- (void)executeUpdateSql:(NSString *)sql;
+
+/// 关闭数据库
+- (void)closeDatabase;
+
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DBConnect.m如下:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;DBConnect.h&quot;
+#import &quot;FMDB.h&quot;
+#define SQLNAME @&quot;mytable.sqlite&quot;
+
+@implementation DBConnect
+
+static DBConnect *dBHandle;
+
++ (DBConnect *)shareConnect
+{
+    if (dBHandle == nil) {
+        dBHandle = [[DBConnect alloc] init];
+        [dBHandle openDatabase];
+    }
+    return dBHandle;
+}
+
++ (NSString *)bundleSQLPath
+{
+    return [[NSBundle mainBundle] pathForResource:@&quot;mytable&quot; ofType:@&quot;sqlite&quot;];
+}
+
+/// 打开数据库
+- (void)openDatabase
+{
+    NSString *sqlPath = [[self getDocumentPath] stringByAppendingPathComponent:SQLNAME];
+    NSLog(@&quot;%@&quot;, sqlPath); // 拼接字符串
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:sqlPath] == NO) {
+        NSString *bundleSQLPath = [DBConnect bundleSQLPath];
+        NSError *err = nil;
+        [fm copyItemAtPath:bundleSQLPath toPath:sqlPath error:&amp;amp;err];
+        if (err != nil) {
+            NSLog(@&quot;copy db fail %@&quot;, [err localizedDescription]);
+        }
+    }
+    
+    self.dataBase = [FMDatabase databaseWithPath:sqlPath];
+    self.dbQueue = [FMDatabaseQueue databaseQueueWithPath:sqlPath];
+    NSLog(@&quot;self.dbQueue==%@&quot;, self.dbQueue);
+    [_dataBase open];
+    if (![_dataBase open]) {
+        NSLog(@&quot;数据库打开失败&quot;);
+    }else{
+        NSLog(@&quot;数据库打开成功&quot;);
+    }
+}
+
+/// 获得document文件的路径
+- (NSString *)getDocumentPath
+{
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]; // 获取document文件的路径
+    return documentPath;
+}
+
+/// 判断是否存在表
+- (BOOL)isTableOK:(NSString *)tableName
+{
+    NSString *sql = [NSString stringWithFormat:@&quot;SELECT count(*) as &#39;count&#39; FROM sqlite_master WHERE type =&#39;table&#39; and name = &#39;%@&#39;&quot;, tableName];
+    int count = [self getDBDataCount:sql];
+    NSLog(@&quot;Table count===%d&quot;, count);
+    if (count &amp;gt; 0) {
+        return YES;
+    }
+    
+    return NO;
+}
+
+/// 创建表
+- (BOOL)createTableSql:(NSString *)sql
+{
+    [self executeInsertSql:sql];
+    return YES;
+}
+
+/// 获得数据
+- (NSArray *)getDBlist:(NSString *)sql
+{
+    __block NSMutableArray *list = [[NSMutableArray alloc] init];
+    NSLog(@&quot;%@&quot;, sql);
+    
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        
+        [db executeStatements:sql withResultBlock:^int(NSDictionary *dictionary) {
+            
+            [list addObject:dictionary];
+            
+            return 0;
+        }];
+        
+    }];
+    
+    return list;
+}
+
+/// 获得单条数据
+- (NSDictionary *)getDBOneData:(NSString *)sql
+{
+    __block NSMutableArray *list = [[NSMutableArray alloc] init];
+    NSLog(@&quot;%@&quot;, sql);
+    
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        
+        [db executeStatements:sql withResultBlock:^int(NSDictionary *dictionary) {
+            
+            [list addObject:dictionary];
+            
+            return 0;
+        }];
+        
+    }];
+    
+    if (list.count == 1) {
+        return [list objectAtIndex:0];
+    }
+    
+    return nil;
+}
+
+/// 统计数量
+- (int)getDBDataCount:(NSString *)sql
+{
+    int count = 0;
+    __block NSMutableArray *list = [[NSMutableArray alloc] init];
+    NSLog(@&quot;%@&quot;, sql);
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        
+        [db executeStatements:sql withResultBlock:^int(NSDictionary *dictionary) {
+            
+            [list addObject:dictionary];
+            
+            return 0;
+        }];
+        
+    }];
+    
+    if (list.count == 1) {
+        NSDictionary *dict = [list objectAtIndex:0];
+        if (dict) {
+            count = [[dict objectForKey:@&quot;count&quot;] intValue];
+        }
+    }
+    NSLog(@&quot;getDBDataCount count===%d&quot;, count);
+    
+    return count;
+}
+
+/// 执行sql (主要用来执行插入操作)
+- (unsigned)executeInsertSql:(NSString *)sql
+{
+    __block unsigned mid = 0;
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        NSLog(@&quot;%@&quot;, sql);
+        BOOL success = [db executeStatements:sql];
+        NSLog(@&quot;sql语句执行成功 %d&quot;, success);
+        sqlite_int64 lastId = [db lastInsertRowId];
+        mid = (unsigned)lastId;
+    }];
+    
+    return mid;
+}
+
+/// 更新操作，删除操作
+- (void)executeUpdateSql:(NSString *)sql
+{
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        NSLog(@&quot;%@&quot;, sql);
+        BOOL success = [db executeStatements:sql];
+        NSLog(@&quot;sql语句执行成功 %d&quot;, success);
+    }];
+}
+
+/// 关闭数据库
+- (void)closeDatabase
+{
+    [self.dataBase close];
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;大体意思是将每个sql操作都放入一个同步线程里，这样就不会有同时操作表的情况出现了。&lt;/p&gt;
+
+&lt;p&gt;详情代码参考，&lt;a href=&quot;https://github.com/xpmozong/Socket&quot; target=&quot;_blank&quot;&gt;https://github.com/xpmozong/Socket&lt;/a&gt;，WeiWei这个项目。&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>iOS 正则表达式</title>
+        <link href="http://xpmozong.github.io/ios/2014/06/21/ios-zhengze"/>
+        <updated>2014-06-21T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios/2014/06/21/ios-zhengze</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios/2014/06/21/ios-zhengze/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;熟悉php的都知道preg_match_all是一个超级强大的正则表达式函数。在数据采集的世界里，有了她，几乎是所向披靡，神挡杀神，佛挡杀佛。&lt;/p&gt;
+
+&lt;p&gt;由于Object-C有没有类似preg_match_all的函数。 NSPredicate 不是很理想。而RegexKit很强大。&lt;/p&gt;
+
+&lt;p&gt;下载地址：&lt;a href=&quot;https://github.com/wezm/RegexKitLite&quot;&gt;RegexKit&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;需要添加一个依懒库：libicucore.dylib&lt;/p&gt;
+
+&lt;p&gt;具体用法，首先引入头文件：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;RegexKitLite.h&quot;
+
+ASIHTTPRequest *htmlRequest = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:str]];
+[htmlRequest setRequestMethod:@&quot;GET&quot;];
+[htmlRequest setTimeOutSeconds:30];
+[htmlRequest setCompletionBlock:^{
+    NSString *resultStr = [[[NSString alloc] initWithData:htmlRequest.responseData encoding:NSUTF8StringEncoding] autorelease];
+    NSString *parten = @&quot;&amp;lt;a class=\&quot;v-link\&quot; href=\&quot;(.*)\&quot; target=\&quot;video\&quot; title=\&quot;(.*)\&quot;&amp;gt;&amp;lt;/a&amp;gt;&quot;;
+    NSArray *resultArray = [resultStr arrayOfCaptureComponentsMatchedByRegex:parten];
+    NSLog(@&quot;%@&quot;, resultArray);
+}];
+[htmlRequest startSynchronous];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可根据自己的需要 重写 &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NSString *parten = @&quot;&amp;lt;a class=\&quot;v-link\&quot; href=\&quot;(.*)\&quot; target=\&quot;video\&quot; title=\&quot;(.*)\&quot;&amp;gt;&amp;lt;/a&amp;gt;&quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;好了，就说到这里。&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>IOS 单例设计模式</title>
+        <link href="http://xpmozong.github.io/ios/2014/04/25/oc-danli"/>
+        <updated>2014-04-25T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios/2014/04/25/oc-danli</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios/2014/04/25/danli/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;IOS单例设计模式，多个页面共用数据。&lt;/p&gt;
+
+&lt;p&gt;创建Singleton类，继承NSObject，Singleton.h的内容为：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@interface Singleton : NSObject
+// 单例， 类只有唯一的一个实例
++ (Singleton *)sharedSingleton;
+@property (nonatomic, retain) UIButton *b;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Singleton.m的内容为：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@implementation Singleton
+static Singleton *s = nil;
++ (Singleton *)sharedSingleton
+{
+    if (s == nil) {
+        s = [[Singleton alloc] init];
+    }
+    return s;
+}
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意：单例中的alloc是不能释放的。&lt;/p&gt;
+
+&lt;p&gt;调用：第一个页面：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[Singleton sharedSingleton].b = _btn1;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;第n个页面：使用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[[Singleton sharedSingleton].b setTitle:_textField.text forState:UIControlStateNormal];
+&lt;/code&gt;&lt;/pre&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>iOS target/action设计模式</title>
+        <link href="http://xpmozong.github.io/ios/2014/04/16/ios-target-action"/>
+        <updated>2014-04-16T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios/2014/04/16/ios-target-action</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios/2014/04/16/ios-target-action/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;iOS中，有一种target/action设计模式，可以使代码高聚合，低耦合。&lt;/p&gt;
+
+&lt;p&gt;创建一个ActionView类&lt;/p&gt;
+
+&lt;p&gt;ActionView.h的文件内容为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@interface ActionView : UIView
+@property (nonatomic, assign) id  target;
+@property (nonatomic, assign) SEL action;
+- (id)initWithFrame:(CGRect)frame target:(id)target action:(SEL)action;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ActionView.m的文件内容为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- (id)initWithFrame:(CGRect)frame target:(id)target action:(SEL)action
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.target = target;
+        self.action = action;
+    }
+    return self;
+}
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [_target performSelector:_action withObject:self];
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;控制层引入ActionView.h文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ActionView *actionView = [[ActionView alloc] initWithFrame:CGRectMake(100, 100, 100, 100) target:self action:@selector(changeColor:)];
+actionView.backgroundColor = [UIColor blueColor];
+[self.view addSubview:actionView];
+[actionView release];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;实现自定义的changeColor方法。&lt;/p&gt;
+
+&lt;p&gt;此过程就是target/action设计模式的实现过程。&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;target/action和delegate对比&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;target…action&lt;/p&gt;
+
+&lt;p&gt;作用：降低耦合性（解耦）&lt;/p&gt;
+
+&lt;p&gt;机制：类内部target去执行action方法，参数self&lt;/p&gt;
+
+&lt;p&gt;特点：外界指定target和action&lt;/p&gt;
+
+&lt;p&gt;注意事项：如果action没实现，程序会crash&lt;/p&gt;
+
+&lt;p&gt;专注点：通常仅仅是为了触发target的action事件&lt;/p&gt;
+
+&lt;p&gt;delegate&lt;/p&gt;
+
+&lt;p&gt;作用：降低耦合性（解耦）&lt;/p&gt;
+
+&lt;p&gt;机制：delegate去执行协议中的方法，参数self&lt;/p&gt;
+
+&lt;p&gt;特点：外界仅能指定delegate，不能指定action，action在协议中已经声明&lt;/p&gt;
+
+&lt;p&gt;注意事项：如果request方法没实现，程序会crash，如果@optional方法没实现，程序不会crash。&lt;/p&gt;
+
+&lt;p&gt;专注点：一系列相关事件的处理（多个事件）&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>OC protocal 的使用</title>
+        <link href="http://xpmozong.github.io/ios,oc/2014/04/12/oc-protocal"/>
+        <updated>2014-04-12T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios,oc/2014/04/12/oc-protocal</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios,oc/2014/04/12/oc-protocal/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Protocal又名协议，协议是一套标准（一堆方法的声明），只有.h文件。&lt;/p&gt;
+
+&lt;p&gt;接受协议的对象，实现协议中定义的方法。&lt;/p&gt;
+
+&lt;p&gt;新建文件，选择Objective-C protocal，名字为 MarrayProtocol&lt;/p&gt;
+
+&lt;p&gt;Protocal 以 @protocal，以@end结束，例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@protocol MarrayProtocol &amp;lt;NSObject&amp;gt;
+@required
+- (void)makeMoney;
+@optional
+- (void)washcloth;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;@required后的方法是必须实现的，@required可写可不写。&lt;/p&gt;
+
+&lt;p&gt;@optional后方法是可选实现的，可实现，可不实现。&lt;/p&gt;
+
+&lt;p&gt;协议定义好之后，需要有类去遵守这个协议，实现协议里的方法。&lt;/p&gt;
+
+&lt;p&gt;遵守协议，即在.h文件的父类名后写上&lt;协议名&gt;。实现协议里的方法即在.m文件中实现协议中的方法。相当于给这个类添加了若干个方法。这个类的实例就可以调用这些方法。&lt;/协议名&gt;&lt;/p&gt;
+
+&lt;p&gt;如何使用代理呢？通常情况下，我们用delegate，新建文件，选择Objective-C protocal，名字为 MarrayDelegate&lt;/p&gt;
+
+&lt;p&gt;内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@protocol MarrayDelegate &amp;lt;NSObject&amp;gt;
+@required
+- (void)makeMoney;
+@optional
+- (void)washcloth;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;之前的MarrayProtocol.h文件不要了。&lt;/p&gt;
+
+&lt;p&gt;创建Husband类， Husband.h内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;MarrayDelegate.h&quot;
+@interface Husband : NSObject &amp;lt;MarrayDelegate&amp;gt;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;MarrayDelegate 遵守协议。&lt;/p&gt;
+
+&lt;p&gt;Husband.m文件内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@implementation Husband
+- (void)makeMoney
+{
+    NSLog(@&quot;给老婆挣钱！&quot;);
+}
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;实现代理里面的方法。&lt;/p&gt;
+
+&lt;p&gt;创建Wife类，Wife.h文件内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;MarrayDelegate.h&quot;
+@interface Wife : NSObject
+@property (nonatomic, assign) id&amp;lt;MarrayDelegate&amp;gt;delegate;
+- (void)shopping;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;将代理名称设为delegate，添加一个方法。&lt;/p&gt;
+
+&lt;p&gt;Wife.m文件内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@implementation Wife
+- (void)shopping
+{
+    NSLog(@&quot;老公，我要购物！&quot;);
+    [_delegate makeMoney];
+}
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;设置代理，和实现方法。&lt;/p&gt;
+
+&lt;p&gt;在主函数import husband.h 和 wife.h 文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Husband *husband = [[Husband alloc] init];
+Wife *wife = [[Wife alloc] init];
+wife.delegate = husband;
+[wife shopping];
+[wife release];
+[husband release];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;输出：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;老公，我要购物！
+给老婆挣钱！
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;整个过程就是实现协议代理的过程。&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>OC property 属性介绍</title>
+        <link href="http://xpmozong.github.io/ios,oc/2014/04/12/oc-property"/>
+        <updated>2014-04-12T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios,oc/2014/04/12/oc-property</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios,oc/2014/04/12/oc-property/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;@property (nonatomic, retain) NSString *subject;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;@propery属性有 atomic, nonatomic, assign, retain, copy, 作用和系统内部实现如下&lt;/p&gt;
+
+&lt;p&gt;1、 atomic, nonatomic 原子性和非原子性。&lt;/p&gt;
+
+&lt;p&gt;在原子性控制上，我们通常设置为nonatomic。&lt;/p&gt;
+
+&lt;p&gt;程序开发过程中，setter、getter处处都在用，如果使用atomic，需要不断的对setter、getter加锁解锁以保证线程访问安全，会很占用系统资源，降低系统性能。&lt;/p&gt;
+
+&lt;p&gt;通常设置为nonatomic，某些属性需要线程安全的时候，才定义为atomic。&lt;/p&gt;
+
+&lt;p&gt;2、 assign 内部实现&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- (void)setSubject:(NSString *)subject
+{
+    _subject = subject;
+}
+- (NSString *)subject
+{
+    return _subject;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、 retain 内部实现&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- (void)setSubject:(NSString *)subject
+{
+    if (_subject != subject) {
+        [_subject release];
+        _subject = [subject retain];
+    }
+}
+
+- (NSString *)subject
+{
+    return [[_subject retain] autorelease];
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4、 copy 内部实现&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- (void)setSubject:(NSString *)subject
+{
+    if (_subject != subject) {
+        [_subject release];
+        _subject = [subject copy];
+    }
+}
+
+- (NSString *)subject
+{
+    return [[_subject retain] autorelease];
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;总结：
+    基本数据类型等用assign，其他对象用retain或者copy，当用MRC时，需要在dealloc中release。&lt;/p&gt;
+
+&lt;p&gt;用self和不用self时，引用计数的区别&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    NSArray * array = [[NSArray alloc] initWithObjects:@&quot;Luke&quot;, @&quot;Leia&quot;, @&quot;Han&quot;, @&quot;Chewbacca&quot;, @&quot;Artoo&quot;, @&quot;Threepio&quot;, @&quot;Lando&quot;, nil];
+    self.pickerData= array;
+    [array release]; // 如果不加self.就会在这里把array直接完全释放，结果array就没法用了。
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;简述内存管理的原则.&lt;/p&gt;
+
+&lt;p&gt;答: 凡是你通过retain、alloc、copy等获得了所有权的对象，都必须在你不再使用它的时候，由你来release、autorelease等手段来释放对它的所有权。retain、alloc、copy的操作次数应该与release、autorelease操作的次数相等。可以在类的dealloc方法中释放你所占有的实例变量。对于便利构造器和访问器来说，你没有通过retain、alloc、copy获得对象的所有权，因此在这些情况下你无须对获得对象进行额外的释放操作。autorelease只不过意味着“预定延迟发送一条release”，当前引用计数并没有变。&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>OC 继承</title>
+        <link href="http://xpmozong.github.io/ios,oc/2014/04/12/oc-jicheng"/>
+        <updated>2014-04-12T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios,oc/2014/04/12/oc-jicheng</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios,oc/2014/04/12/oc-jicheng/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OC中的继承是单向的，继承具有传递性，子类继承父类的特征和行为，子类扩展父类，更具体。&lt;/p&gt;
+
+&lt;p&gt;OC中的继承,即⼀个类继承另一个类。&lt;/p&gt;
+
+&lt;p&gt;被继承的类称为⽗父类或超类。&lt;/p&gt;
+
+&lt;p&gt;继承的类称为⼦子类。&lt;/p&gt;
+
+&lt;p&gt;继承的实现如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;Person.h&quot;
+@interface Student : Person
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;冒号前为子类名称，冒号后为父类名称&lt;/p&gt;
+
+&lt;p&gt;继承的特点&lt;/p&gt;
+
+&lt;p&gt;OC中只允许单继承。&lt;/p&gt;
+
+&lt;p&gt;没有⽗类的类称为根类,OC中的根类是NSObject(祖宗)。 继承的内容:除了私有变量之外的所有实例变量和方法。&lt;/p&gt;
+
+&lt;p&gt;⼦类可以重写⽗类的方法。&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>OC extension 的使用</title>
+        <link href="http://xpmozong.github.io/ios,oc/2014/04/12/oc-extension"/>
+        <updated>2014-04-12T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios,oc/2014/04/12/oc-extension</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios,oc/2014/04/12/oc-extension/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OC Extension 的主要作用是为类添加“私有”方法，外部不能调用。&lt;/p&gt;
+
+&lt;p&gt;Category 和 Extension 的区别：&lt;/p&gt;
+
+&lt;p&gt;一、作用：&lt;/p&gt;
+
+&lt;p&gt;Category 为没有源代码的类添加方法。&lt;/p&gt;
+
+&lt;p&gt;Extension 管理类的私有方法。&lt;/p&gt;
+
+&lt;p&gt;二、格式&lt;/p&gt;
+
+&lt;p&gt;Category 定义一对.h和.m 文件&lt;/p&gt;
+
+&lt;p&gt;Extension 把代码写到原有类的.m文件中&lt;/p&gt;
+
+&lt;p&gt;Extension 用法如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#import &quot;Person.h&quot;
+@interface Person ()
+- (void)sayHello;
+@end
+
+@implementation Person
+- (void)sayHello
+{
+    NSLog(@&quot;Hello&quot;);
+}
+- (void)say
+{
+    NSLog(@&quot;hi&quot;);
+    [self sayHello];
+}
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在Person.m文件添加私有方法sayHello，内部调用。&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>OC category 类目的使用</title>
+        <link href="http://xpmozong.github.io/ios,oc/2014/04/12/oc-category"/>
+        <updated>2014-04-12T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ios,oc/2014/04/12/oc-category</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ios,oc/2014/04/12/oc-category/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OC 有个很重要的特性，Category，类目，类目的主要作用是为 没有源代码的类添加方法。&lt;/p&gt;
+
+&lt;p&gt;通过Category添加的方法会成为原类的一部分，从而达到扩展一个类的功能。&lt;/p&gt;
+
+&lt;p&gt;当你使用 NSString 这个类，想要一个 sayHello 的方法，但是NSString类没有这个方法，就需要为这个类添加方法。&lt;/p&gt;
+
+&lt;p&gt;如下操作：&lt;/p&gt;
+
+&lt;p&gt;新建文件，选择Objective-C category， 文件名Hello, Category on 选择 NSString。&lt;/p&gt;
+
+&lt;p&gt;自动生成 NSString+Hello.h 和 NSString+Hello.m 文件。&lt;/p&gt;
+
+&lt;p&gt;在 NSString+Hello.h 文件写上 &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@interface NSString (Hello)
+- (void)sayHello;
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在 NSString+Hello.m 文件写上&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@implementation NSString (Hello)
+- (void)sayHello
+{
+    NSLog(@&quot;Hello %@&quot;, self);
+}
+@end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;你自定义的类，做好了。&lt;/p&gt;
+
+&lt;p&gt;在main.m中，#import “NSString+Hello.h” 自定义类文件，调用代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;NSString *str = @&quot;Ellen&quot;;
+[str sayHello];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果输出 Hello Ellen , 那你拓展 NSString 类就成功了。&lt;/p&gt;
+
+&lt;p&gt;Category类目 与 Subclass子类 的区别&lt;/p&gt;
+
+&lt;p&gt;一、功能&lt;/p&gt;
+
+&lt;p&gt;Category只能为类添加方法&lt;/p&gt;
+
+&lt;p&gt;Subclass既能为类添加方法也能添加变量&lt;/p&gt;
+
+&lt;p&gt;二、特点&lt;/p&gt;
+
+&lt;p&gt;Category新添加的方法会成为原始类的一部分，能被子类继承。&lt;/p&gt;
+
+&lt;p&gt;Subclass新添加的方法只有子类才有，父类不具有&lt;/p&gt;
+
+&lt;p&gt;三、使用&lt;/p&gt;
+
+&lt;p&gt;Category，（如果是-方法）使用原有类的实例 或者（如果是+方法）原始类调用方法&lt;/p&gt;
+
+&lt;p&gt;Subclass子类才能调用，如果项目开发到尾声的时候，使用子类添加了方法，需要对已写代码做类型替换（将父类替换为子类。）&lt;/p&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>C语言指针</title>
+        <link href="http://xpmozong.github.io/c/2014/03/20/c-zhizhen"/>
+        <updated>2014-03-20T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/c/2014/03/20/c-zhizhen</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/c/2014/03/20/c-zhizhen/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;C语言指针&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;一、指针变量定义&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int *p = NULL;  // p 为变量名，NULL初始值，NULL恒等于0。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;与普通变量不同的是，定义指针变量的时候，前面需要加 * 。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int a = 3;
+int *p = &amp;amp;a;    // 指针取地址
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;二、指针重新赋值&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*p = 100;   // (*p) 代表 a，p代表a的地址
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;三、指针数组&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int arr[3] = {1,3,8};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在C语言中，数组是构造类型，系统会分配一段连续的空间来存储数组的全部数据。其中数组名代表数组首元素地址（第一个元素的内存地址）。&lt;/p&gt;
+
+&lt;p&gt;arr 恒等于 &amp;amp;arr[0]。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int *p = arr; // 保存数组首地址  此时p与arr相同，均指向数组的首地址。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;p[1] = 3; 
+恒等于a[1]
+恒等于&lt;em&gt;(p+1)
+恒等于&lt;/em&gt;(a+1)&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;四、指针与字符串&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;char string[] = &quot;iPhone&quot;;
+char *p = string;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;五、指针数组&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;char *strings[3] = {&quot;iPhone&quot;, &quot;Android&quot;, &quot;win8&quot;};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意可以通过指针来修改字符数组，但不可以修改字符串。修改用strcopy。&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;六、结构体指针&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;定义一个结构体&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;typedef struct {
+    char name[20];
+    char sex;
+} Student;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结构体指针定义&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Student stu = {&quot;Ellen&quot;, &#39;f&#39;};
+Student *p = &amp;amp;stu;
+
+//  修改
+(*p).sex = &#39;m&#39;;
+p-&amp;gt;sex = &#39;m&#39;;
+
+//  访问
+printf(&quot;%c\n&quot;, p-&amp;gt;sex); 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;七、结构体数组&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Student stus[3] = {
+    {&quot;Ellen&quot;, &#39;f&#39;},
+    {&quot;Albert&quot;, &#39;m&#39;}
+};
+
+Student *p = stus;
+for(int i = 0, i &amp;lt; 3, i++){
+    printf(&quot;%c &quot;, (p+i)-&amp;gt;sex);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;八、结构体指针为函数参数&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;void printStudents(const Student *pStu, int count);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;九、函数指针定义&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int maxValue(int a, int b)
+{
+    return a &amp;gt; b ? a : b
+}
+
+int (*p)(int a, int b) = NULL;
+p = maxValue;   // 赋值函数名
+int m = p(3,5); // 指针可当函数用
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;十、函数指针回调函数&lt;/b&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int getValue(int a, int b, int (*p)(int,int))
+{
+    return p(a, b);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;函数指针做getValue函数的参数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int value = getValue(3,5, maxValue);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;十一、用函数指针回调函数的案例&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;新建 Student.h 和 Student.m 文件&lt;/p&gt;
+
+&lt;p&gt;在Student.h文件里&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 声明一个学生结构体
+typedef struct {
+    char  name[30]; // 名字
+    int   age;      // 年龄
+    float score;    // 成绩
+} Student;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;main.m主函数文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 目标是对学生数组的名字或者年龄或者成绩排序
+// 用回调指针函数排序
+Student stus[] = {
+    {&quot;Ellen2&quot;, 23, 88},
+    {&quot;Ellen1&quot;, 20, 99},
+    {&quot;Ellen4&quot;, 18, 77},
+    {&quot;Ellen3&quot;, 22, 66}
+};
+
+int count = sizeof(stus) / sizeof(*stus);
+// 实现下面的函数
+sortArray(stus, count, &quot;score&quot;);
+printArray(stus, count);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如何完成上面的目标？&lt;/p&gt;
+
+&lt;p&gt;Student.h 文件 引入 &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;string.h&amp;gt;
+#include &amp;lt;stdbool.h&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;剩下的内容：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 比较名字
+bool compareName(const Student *pStu1, const Student *pStu2);
+// 比较年龄
+bool compareAge(const Student *pStu1, const Student *pStu2);
+// 比较成绩
+bool compareScore(const Student *pStu1, const Student *pStu2);
+// 定义一个指针函数
+typedef bool (*PFUNC)(const Student *, const Student *);
+// 声明一个函数名结构体
+typedef struct{
+    char name[20];  // 函数名
+    PFUNC p;        // 指针函数
+} FuncName;
+// 交换位置
+void swap(Student *pStu1, Student *pStu2);
+// 冒泡排序
+void bubbleSort(Student *pArr, const int count, PFUNC p);
+// 根据传入的参数，返回哪种函数
+PFUNC getFuncName(const char *pName);
+// 排序，pName 传入参数，选择根据XX排序
+void sortArray(Student *pArr, const int count, const char *pName);
+// 遍历数组
+void printArray(const Student *pArr, const int count);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Student.m 文件实现.h里声明的函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 比较名字
+bool compareName(const Student *pStu1, const Student *pStu2)
+{
+    return strcmp(pStu1-&amp;gt;name, pStu2-&amp;gt;name) &amp;gt; 0;
+}
+// 比较年龄
+bool compareAge(const Student *pStu1, const Student *pStu2)
+{
+    return pStu1-&amp;gt;age &amp;gt; pStu2-&amp;gt;age;
+}
+// 比较成绩
+bool compareScore(const Student *pStu1, const Student *pStu2)
+{
+    return pStu1-&amp;gt;score &amp;gt; pStu2-&amp;gt;score;
+}
+// 交换位置
+void swap(Student *pStu1, Student *pStu2)
+{
+    Student temp = *pStu1;
+    *pStu1 = *pStu2;
+    *pStu2 = temp;
+}
+// 冒泡排序
+void bubbleSort(Student *pArr, const int count, PFUNC p)
+{
+    for (int i = 0; i &amp;lt; count; i++) {
+        for (int j = 0; j &amp;lt; count - i - 1; j++) {
+            if (p(pArr + j, pArr + j + 1)) {
+                swap(pArr + j, pArr + j + 1);
+            }
+        }
+    }
+}
+// 根据传入的参数，返回哪种函数
+PFUNC getFuncName(const char *pName)
+{
+    FuncName funcNames[] = {
+        {&quot;name&quot;, compareName},
+        {&quot;age&quot;, compareAge},
+        {&quot;score&quot;, compareScore}
+    };
+    PFUNC p = NULL;
+    for (int i = 0; i &amp;lt; sizeof(funcNames) / sizeof(*funcNames); i++) {
+        if (strcmp(funcNames[i].name, pName) == 0) {
+            p = funcNames[i].p;
+            break;
+        }
+    }
+    return p;
+}
+// 排序，pName 传入参数，选择根据XX排序
+void sortArray(Student *pArr, const int count, const char *pName)
+{
+    PFUNC p = NULL;
+    p = getFuncName(pName);
+    if (p != NULL) {
+        bubbleSort(pArr, count, p);
+    }else{
+        printf(&quot;函数名输入错误!\n&quot;);
+    }
+}
+// 遍历数组
+void printArray(const Student *pArr, const int count)
+{
+    for (int i = 0; i &amp;lt; count; i++) {
+        printf(&quot;%s %d %.2f\n&quot;, pArr[i].name, pArr[i].age, pArr[i].score);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;main.m主函数文件只需要指定，根据XX排序，就可以了。&lt;/p&gt;
+
+&lt;p&gt;比如按照 年龄 排序&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sortArray(stus, count, &quot;age&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP扩展开发 - 第一个扩展</title>
+        <link href="http://xpmozong.github.io/php/2013/12/05/php-extension"/>
+        <updated>2013-12-05T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2013/12/05/php-extension</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2013/12/05/php-extension/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;学习PHP扩展开发，是PHPer的必学课程。接着上一节课程，&lt;a href=&quot;/php/2013/12/05/lnmp/&quot; target=&quot;_blank&quot;&gt;Linux + Nginx + Mysql + PHP 编译安装&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;需求：比如开发一个叫做 hello_world 的扩展，扩展里就一个函数 hello_world_test()，输入一个字符串，函数返回：Your input string: xxxxx! 。&lt;/p&gt;
+
+&lt;p&gt;环境： php-5.3.16&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;第一步、生成代码&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;PHP为了扩展开发的方便，提供了一个类似代码生成器的工具ext_skel&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /opt/php-5.3.16/ext/
+./ext_skel --extname=hello_world --proto=hello_world.skel
+cd hello_world/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;生成代码啦&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;第二步，修改配置&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;然后修改config.m4文件将10、11、12三行最前面的dnl删除掉，就是将&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;dnl PHP_ARG_WITH(hello_world, for hello_world support,
+dnl Make sure that the comment is aligned:
+dnl [  --with-hello_world             Include hello_world support])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;修改为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PHP_ARG_WITH(hello_world, for hello_world support,
+Make sure that the comment is aligned:
+[  --with-hello_world             Include hello_world support])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;第三步，实现功能&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;修改源码php_hello_world.h文件&lt;/p&gt;
+
+&lt;p&gt;在&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PHP_FUNCTION(confirm_hello_world_compiled);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;后，添加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PHP_FUNCTION(hello_world_test);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后修改源码 hello_world.c 文件&lt;/p&gt;
+
+&lt;p&gt;添加&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PHP_FUNCTION(hello_world_test)
+{
+        char *arg = NULL;
+        int arg_len, len;
+        char *strg;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, &quot;s&quot;, &amp;amp;arg, &amp;amp;arg_len) == FAILURE) {
+                return;
+        }
+
+        len = spprintf(&amp;amp;strg, 0, &quot;Hello World! Your input string: %s\n&quot;, arg);
+        RETURN_STRINGL(strg, len, 0);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;第四步，编译扩展&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;保存后，开始编译&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+make
+make test
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;第五步，添加扩展&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;现在看看是不是有个 /usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/hello_world.so&lt;/p&gt;
+
+&lt;p&gt;编辑php.ini配置文件，把扩展加入进去：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 扩展路径
+extension_dir = &quot;/usr/local/php/lib/php/extensions/no-debug-non-zts-20090626/&quot;
+extension = hello_world.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;保存退出。&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt;第六步，检查安装结果&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;编辑test.php文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;echo &quot;&amp;lt;pre&amp;gt;&quot;;
+$str = confirm_hello_world_compiled(hello_world);
+echo $str.&quot;&amp;lt;br&amp;gt;&quot;;
+
+print_r(get_loaded_extensions());
+print_r(get_extension_funcs(&#39;hello_world&#39;));
+echo hello_world_test(&#39;My first php extension! &#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;看看有没有结果输出！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>Linux + Nginx + Mysql + PHP 编译安装</title>
+        <link href="http://xpmozong.github.io/php/2013/12/05/lnmp"/>
+        <updated>2013-12-05T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2013/12/05/lnmp</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2013/12/05/lnmp/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;首先准备安装包&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nginx-1.0.15.tar.gz
+php-5.3.16.tar.gz
+libaio-0.3.93-4.i386.rpm
+MySQL-server-5.5.14-1.rhel5.x64.rpm
+MySQL-client-5.5.14-1.rhel5.x64.rpm
+MySQL-shared-5.5.14-1.rhel5.x64.rpm
+MySQL-devel-5.5.14-1.rhel5.x64.rpm
+libmcrypt-2.5.7.tar.gz
+mhash-0.9.9.9.tar.gz
+mcrypt-2.6.8.tar.gz
+pcre-8.33.tar.gz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先yum一些必要的
+    yum -y install gcc-c++ openssl-devel libjpeg-devel libpng-devel libXpm-devel ImageMagick ImageMagick-devel freetype freetype-devel curl-devel&lt;/p&gt;
+
+&lt;p&gt;然后安装各个库，依次是libmcrypt，mhash， mcrypt 和pcre&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tar zxvf libmcrypt-2.5.8.tar.gz
+cd libmcrypt-2.5.8/
+./configure
+make
+make install
+/sbin/ldconfig
+cd libltdl/
+./configure --enable-ltdl-install
+make
+make install
+cd ../../
+
+tar zxvf mhash-0.9.9.9.tar.gz
+cd mhash-0.9.9.9/
+./configure
+make
+make install
+cd ../
+ 
+ln -s /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
+ln -s /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
+ln -s /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
+ln -s /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
+ln -s /usr/local/lib/libmhash.a /usr/lib/libmhash.a
+ln -s /usr/local/lib/libmhash.la /usr/lib/libmhash.la
+ln -s /usr/local/lib/libmhash.so /usr/lib/libmhash.so
+ln -s /usr/local/lib/libmhash.so.2 /usr/lib/libmhash.so.2
+ln -s /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
+
+tar zxvf mcrypt-2.6.8.tar.gz
+cd mcrypt-2.6.8/
+/sbin/ldconfig
+./configure
+make
+make install
+cd ../
+
+tar zxvf pcre-8.33.tar.gz
+cd pcre-8.30
+./configure
+make
+make install
+cd ../
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一、安装MySQL&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rpm -ivh libaio-0.3.93-4.x64.rpm
+rpm -ivh MySQL-server-5.5.14-1.rhel5.x64.rpm
+rpm -ivh MySQL-client-5.5.14-1.rhel5.x64.rpm
+rpm -ivh MySQL-shared-5.5.14-1.rhel5.x64.rpm
+rpm -ivh MySQL-devel-5.5.14-1.rhel5.x64.rpm
+
+service mysql start
+//修改密码
+mysql_secure_installation
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;二、安装PHP&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tar zxvf php-5.3.16.tar.gz
+cd php-5.3.16
+mkdir -p /usr/local/php
+// 很多的模块
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/bin/ --with-libdir=lib64 --with-mysqli=/usr/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash --enable-pcntl --enable-sockets  --with-xmlrpc --enable-zip --enable-soap --with-pdo-mysql=/usr/bin/mysql --with-mysql-sock=/var/lib/mysql/mysql.sock
+// 简单的模块
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/bin/ --with-libdir=lib64 --enable-xml --enable-zip --enable-fpm --enable-mbstring --with-gd --with-zlib --with-curl --with-pdo-mysql=/usr/bin/mysql --with-mysql-sock=/var/lib/mysql/mysql.sock
+
+// 如果有这个错误
+configure: error: Cannot find libmysqlclient under /usr.
+Note that the MySQL client library is not bundled anymore!
+// 就加上
+--with-libdir=lib64
+
+make
+make install
+
+cp php.ini-production /usr/local/php/etc/php.ini
+cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm #因为php5.3开始自带fpm，使用自带的管理脚本
+chmod +x /etc/init.d/php-fpm
+chkconfig php-fpm on #设置开机自启动
+cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+
+// 然后修改php-fpm.conf，将pid改成以下，并将user和group改成www
+pid = run/php-fpm.pid
+user = www
+group = www
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;三、安装NGINX&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;groupadd www
+useradd -s /sbin/nologin -g www www #www用户不能login
+mkdir -p /home/www #此路径是用于存放各域名的root路径
+chmod +w /home/www
+mkdir -p /home/wwwlogs
+chmod 755 /home/wwwlogs
+chown -R www:www /home/www
+
+tar zxvf nginx-1.0.15.tar.gz
+cd nginx-1.0.15/
+./configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module
+make &amp;amp;&amp;amp; make install
+mkdir /usr/local/nginx/conf/vhosts/ #用于配置各域名
+
+// 修改Nginx的配置文件
+mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx_bak.conf
+vi /usr/local/nginx/conf/nginx.conf
+
+
+user  www;
+
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  &#39;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#39;
+    #                  &#39;$status $body_bytes_sent &quot;$http_referer&quot; &#39;
+    #                  &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server {
+        listen 80;
+        index index.php index.html index.htm;
+        root /home/www;
+        access_log /home/wwwlogs/localhost.log combined;
+        error_log /home/wwwlogs/localhost.log;
+        
+        #expires
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires 30d;
+        }
+        
+        location ~ .*\.(js|css)?$
+        {
+            expires 24h;
+        }
+        
+        if ($request_filename !~ (index\.php|images|min|robots\.txt|.*\.css|.*\.js|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.swf|.*\.ocx|.*\.cab)){
+            rewrite ^/(.*)$ /index.php/$1 last;
+        }
+
+        location ~ .*\.php {
+            fastcgi_pass   127.0.0.1:9000;
+            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+            fastcgi_index  index.php;
+            fastcgi_split_path_info ^(.+\.php)(.*)$;                                            
+            fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;                 
+            fastcgi_param   PATH_INFO $fastcgi_path_info;                                       
+            fastcgi_param   PATH_TRANSLATED $document_root$fastcgi_path_info;                   
+            include fastcgi_params;  
+        }
+        
+    }
+
+
+    # another virtual host using mix of IP-, name-, and port-based configuration
+    #
+    #server {
+    #    listen       8000;
+    #    listen       somename:8080;
+    #    server_name  somename  alias  another.alias;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+
+    # HTTPS server
+    #
+    #server {
+    #    listen       443;
+    #    server_name  localhost;
+
+    #    ssl                  on;
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_timeout  5m;
+
+    #    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers   on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;因为默认是没有nginx管理脚本的，在此先新建一个，运行vi /etc/init.d/nginx，输入&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+#
+# nginx - this script starts and stops the nginx daemin
+#
+# chkconfig:   - 85 15 
+# description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
+#               proxy and IMAP/POP3 proxy server
+# processname: nginx
+# config:      /usr/local/nginx/conf/nginx.conf
+# pidfile:     /usr/local/nginx/logs/nginx.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ &quot;$NETWORKING&quot; = &quot;no&quot; ] &amp;amp;&amp;amp; exit 0
+
+nginx=&quot;/usr/local/nginx/sbin/nginx&quot;
+prog=$(basename $nginx)
+
+NGINX_CONF_FILE=&quot;/usr/local/nginx/conf/nginx.conf&quot;
+
+lockfile=/var/lock/subsys/nginx
+
+start() {
+    [ -x $nginx ] || exit 5
+    [ -f $NGINX_CONF_FILE ] || exit 6
+    echo -n $&quot;Starting $prog: &quot;
+    daemon $nginx -c $NGINX_CONF_FILE
+    retval=$?
+    echo
+    [ $retval -eq 0 ] &amp;amp;&amp;amp; touch $lockfile
+    return $retval
+}
+
+stop() {
+    echo -n $&quot;Stopping $prog: &quot;
+    killproc $prog -QUIT
+    retval=$?
+    echo
+    [ $retval -eq 0 ] &amp;amp;&amp;amp; rm -f $lockfile
+    return $retval
+}
+
+restart() {
+    configtest || return $?
+    stop
+    start
+}
+
+reload() {
+    configtest || return $?
+    echo -n $&quot;Reloading $prog: &quot;
+    killproc $nginx -HUP
+    RETVAL=$?
+    echo
+}
+
+force_reload() {
+    restart
+}
+
+configtest() {
+  $nginx -t -c $NGINX_CONF_FILE
+}
+
+rh_status() {
+    status $prog
+}
+
+rh_status_q() {
+    rh_status &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+}
+
+case &quot;$1&quot; in
+    start)
+        rh_status_q &amp;amp;&amp;amp; exit 0
+        $1
+        ;;
+    stop)
+        rh_status_q || exit 0
+        $1
+        ;;
+    restart|configtest)
+        $1
+        ;;
+    reload)
+        rh_status_q || exit 7
+        $1
+        ;;
+    force-reload)
+        force_reload
+        ;;
+    status)
+        rh_status
+        ;;
+    condrestart|try-restart)
+        rh_status_q || exit 0
+            ;;
+    *)
+        echo $&quot;Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}&quot;
+        exit 2
+esac
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;为该文件增加执行权限，并设置为自启动&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;chmod +x /etc/init.d/nginx
+chkconfig nginx on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;环境说明&lt;/p&gt;
+
+&lt;p&gt;直接输入以下命令，会得到相应的结果&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;service nginx restart 重启nginx
+service mysql restart 重启mysql
+service php-fpm restart 重启php-fpm
+service php-fpm stop 停止php-fpm
+service php-fpm start 启动php-fpm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;各站点的根目录是/home/www/&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;php: /usr/local/php/etc/
+nginx: /usr/local/nginx/conf/
+find / -name &quot;my.ini&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;启动nginx的时候遇到 error while loading shared libraries: libpcre.so.1:&lt;/p&gt;
+
+&lt;p&gt;答：增加以下软连接，注意，如果是64位系统，对应目录是/lib64&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# cd /lib64
+cd /lib
+ln -s /usr/local/lib/libpcre.so.1 /lib64
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Centos查看端口占用情况命令，比如查看80端口占用情况使用如下命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;lsof -i tcp:80
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;列出所有端口&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;netstat -ntlp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;查看进程&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ps -ef | grep nginx
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>linux 小总结</title>
+        <link href="http://xpmozong.github.io/linux/2013/11/29/linux-summary"/>
+        <updated>2013-11-29T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/linux/2013/11/29/linux-summary</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/linux/2013/11/29/linux-summary/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1、初始安装&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum install make apr* autoconf automake gcc gcc-c++ openssl openssl-devel pcre-devel gd  kernel keyutils perl kernel-headers compat* mpfr cpp glibc libgomp libstdc++-devel ppl cloog-ppl keyutils-libs-devel libcom_err-devel libsepol-devel libselinux-devel krb5-devel zlib-devel libXpm* freetype libjpeg* libpng* ncurses* libtool* libxml2 libxml2-devel patch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、日志20行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cat error.log | awk &#39;{print $1}&#39;|sort|uniq -c|sort -nr|head -20
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、运行C程序&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum -y install gcc
+yum -y install gcc-c++ 
+yum install make
+// 编译 
+gcc hello.c -o hello
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4、加全局变量&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;编辑： vim /root/.bash_profile
+添加： export PATH=$PATH:/usr/local/go/bin
+运行： source /root/.bash_profile
+可以通过 echo $PATH 来查看环境变量
+vim .bashrc
+source .bashrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5、Centos查看端口占用情况命令，比如查看80端口占用情况使用如下命令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;lsof -i tcp:80
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;6、列出所有端口&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;netstat -ntlp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7、查看进程&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ps -ef | grep nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;8、按照这个步骤启动uwsgi&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ps aux | grep uwsgi
+pkill uwsg
+screen
+uwsgi -x /data/funny/uwsgi.xml
+chown -R www:www /tmp/funny.sock
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;9、列出文件夹下文件夹大小&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;du -sh /data/*  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;10、定时执行修改&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;crontab -e
+/etc/init.d/crond restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;11、复制&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 复制指定目录的文件到当前目录，并重命名
+cp ~/.bashrc bashrc_bak
+
+// 强制复制指定目录的文件到当前目录，而不管当前目录是否含有该文件
+cp -f ~/.bashrc bashrc
+
+// 复制指定目录到当前目录
+cp -r /root/test .
+cp -r /root/test/ .
+
+// 复制指定目录的文件到指定目录
+cp ~/.bashrc /bak/.bashrc
+// 若提示：
+cp: omitting directory
+// 则采用：
+cp -r ~/.bashrc /bak/.bashrc
+// 若提示：
+cp:overwrite
+// 则采用加斜杠：
+/cp -r -f ~/.bashrc /bak/.bashrc
+
+// 在复制时将源文件的全部属性也复制过来。若不指定参数，则目标文件与源文件属性可能不一致。
+cp -a ~/.bashrc /bak/.bashrc
+
+// 若两个文件夹要保证同步，一个文件的改了，另一个文件也跟着改，但是要保证两个文件的文件都是最新的。
+cp -u /src/.bashrc /bak_src/bashrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;12、重命名文件夹&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mv oldfilename newfilename
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;13、防火墙&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 关闭
+/etc/init.d/iptables stop
+// 添加例外端口 
+vim /etc/sysconfig/iptables
+-A INPUT -p tcp -m tcp --dport 55 -j ACCEPT
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;14、查找文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;find / -name access_log
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;15、网桥&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;brctl show
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;16、noVNC&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum install python-devel
+nohup /data/noVNC/utils/launch.sh &amp;amp;
+// 普通访问
+/data/noVNC/utils/websockify.py -D 8000 192.168.1.1:5900
+http://192.168.1.1:6080/vnc_auto.html?host=192.168.1.1&amp;amp;port=8000
+// proxy访问
+/data/noVNC/utils/websockify --target-config=/data/noVNC/vnc_tokens 29876
+http://192.168.1.1:6080/vnc_auto.html?host=192.168.1.1&amp;amp;port=29876&amp;amp;token=212oukhdvszujihzqvm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;17、virsh、qemu命令&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 远程连接
+virsh -c qemu+tls://192.168.1.1:23/system list --all
+// 创建磁盘
+qemu-img create -f qcow2 -o preallocation=metadata /data/vm/test2.qcow2 8G
+// 编辑虚拟机文件
+virt-edit -d 912-2 /root/meta.js
+// 挂载虚拟机磁盘
+guestmount --rw -a /data/qyinstances/instance-11354/disk.qcow2 -m /dev/sda1 /mnt/qyvms/
+
+fusermount -u /mnt/tmp1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;18、将文件转成镜像&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mkisofs -r -o meta.iso meta.js
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;19、挂载文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mount /dev/sr0 /media/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;20、查看硬盘还剩多少容量&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;df -h
+fdisk -l
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;21、获取IP地址&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;dhclient -d eth0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;22、随机生成mac地址&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;MACADDR=&quot;52:54:$(dd if=/dev/urandom count=1 2&amp;gt;/dev/null | md5sum | sed &#39;s/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/&#39;)&quot;; echo $MACADDR
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;23、更改文件或文件夹所属&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;chown qemu.qemu /dev/kvm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;24、修改ip&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;vim /etc/sysconfig/network-scripts/ifcfg-em1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;25、查看网线有没有连接&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mii-tool em2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;26、获得掩码&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cat /etc/sysconfig/network-scripts/ifcfg-public | grep -i netmask  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;27、获得网关&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;route -n | awk &#39;{print $2}&#39; | tail -1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;28、salt学习&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;salt-key -L
+salt-key -d opstest
+salt &quot;*&quot; grains.items
+salt &quot;*&quot; grains.item id
+salt &quot;*&quot; grains.item ipv4
+// 分发文件 
+salt &#39;hadoop1&#39; cp.get_file salt://test.txt /data/test.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;29、SCP&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 从本地复制到远程
+scp -P 22 /data/iso/test.txt admin@192.168.1.1:/data/iso/
+// 从远程复制到本地
+scp -P 22 root@192.168.1.1:/data/vm/test.txt /data/iso/test.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;30、判断一文件是否存在&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;test -f /data/iso/centos6.3.qcow2;echo $?
+// 0为有文件，其他为无文件
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;31、ssh 登录&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh -p 22 -i id_rsa admin@192.168.1.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;32、rpm删不掉的话 用这个&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rpm -e opennebula-sunstone-4.0.0-1.x86_64 --noscripts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;33、添加用户并登陆&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;useradd opsvmadmin
+groupadd opsvmadmin
+usermod -a -G opsvmadmin opsvmadmin
+vim /etc/ssh/sshd_config
+// 加入 AllowGroups opsvmadmin
+/etc/init.d/sshd restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;34、检测某段内ip是否可用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;fping -t 500 -g  192.168.1.1 192.168.1.128
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;35、ll 不可用的时候&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;vim ~/.bashrc  alias ll=&#39;ls -l --color=auto&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;36、看某个文件逐渐增加的&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;watch &quot;ls -l&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;37、打包&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;tar zcvf noVNC.tar.gz noVNC/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;38、证书使用包&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum install -y gnutls-utils
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;39、查看iptables 列表&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;iptables -L -n
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;40、输出CPU使用率、输出内存使用率&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cat /proc/stat | grep cpu | head -1 | awk &#39;{sum=$2+$3+$4+$5+$6+$7+$8;use=$2+$3+$4+$6+$7+$8;printf &quot;%s\t%.2f%%\n&quot;,$1,(use*100/sum)}&#39;
+free | grep Mem: | awk &#39;{use=$3-$6-$7;printf &quot;%s\t%.2f%%\n&quot;,$1,(use*100/$2)}&#39;
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>mysql 小总结</title>
+        <link href="http://xpmozong.github.io/mysql/2013/11/28/mysql-summary"/>
+        <updated>2013-11-28T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/mysql/2013/11/28/mysql-summary</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/mysql/2013/11/28/mysql-summary/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1、两个关联表的字段的数据需相同，这么同步&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;UPDATE tb1 f left join tb2 m on f.uid=m.uid set f.images_ischeck = m.images_ischeck where f.images_ischeck != m.images_ischeck
+UPDATE server_message m left join server_message_schedule s on m.server_id=s.server_id set s.server_cost = m.server_cost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、给两个关联表的相关字段加索引&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX idx_origin_id_id ON en_sentence_translated(origin_id,id)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、两个关联表，其中一个表示一对多的关系，用max、group by&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT cn.content cn_content,en.content en_content,MAX(en.id) FROM `cn_sentence_origin` cn
+LEFT JOIN en_sentence_translated en ON cn.id=en.origin_id 
+WHERE cn.file_id=628 GROUP BY cn.id
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4、给数据库加权限&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GRANT ALL ON weblog.* TO wqylog@127.0.0.1 IDENTIFIED BY &quot;xuping890327&quot;;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;用户名：wqylog  密码：xuping890327&lt;/p&gt;
+
+&lt;p&gt;5、mysql 清空表&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;truncate table 表名;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;6、utf-8字符排序&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT * FROM `origin_file` WHERE parentid=0 ORDER BY CONVERT( name USING gbk ) COLLATE gbk_chinese_ci ASC
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7、根据IP排序&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT FROM server_message ORDER BY INET_ATON(server_message.server_ip1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;8、根据ids 排序&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;select * from server_message m  where m.server_id in(4,5,2,8) order by field(m.server_id,&#39;4,5,2,8&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>利用github jekyll 创建 blog</title>
+        <link href="http://xpmozong.github.io/ruby/2013/11/27/jekyll"/>
+        <updated>2013-11-27T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/ruby/2013/11/27/jekyll</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/ruby/2013/11/27/jekyll/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;一、准备工作&lt;/p&gt;
+&lt;p&gt;1、安装ruby，windows下推荐安装&lt;a href=&quot;http://rubyinstaller.org/downloads/&quot; target=&quot;_blank&quot;&gt;rubyinstaller&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;2、windows安装&lt;a href=&quot;http://rubyinstaller.org/downloads/&quot; target=&quot;_blank&quot;&gt;DevKit&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;命令行进入刚刚安装的目录，我安装在这个目录：D:\DevKit,执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ruby dk.rb init
+ruby dk.rb install
+gem install rdiscount --platform=ruby
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果能安装rdiscount成功说明安装DevKit成功。&lt;/p&gt;
+&lt;p&gt;3、安装jekyll  &lt;/p&gt;
+&lt;p&gt;执行 gem install jekyll  命令&lt;/p&gt;
+&lt;p&gt;windows下会有编码问题，修改这个文件E:\soft\Ruby193\lib\ruby\gems\1.9.1\gems\jekyll-1.3.0\lib\jekyll&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def read_yaml(base, name, opts = {})
+  begin
+    # self.content = File.read_with_options(File.join(base, name),
+    #                                       merged_file_read_opts(opts))
+    self.content = File.read(File.join(base, name), :encoding =&amp;gt; &quot;utf-8&quot;)
+    if self.content =~ /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
+      self.content = $POSTMATCH
+      self.data = YAML.safe_load($1)
+    end
+  rescue SyntaxError =&amp;gt; e
+    puts &quot;YAML Exception reading #{File.join(base, name)}: #{e.message}&quot;
+  rescue Exception =&amp;gt; e
+    puts &quot;Error reading file #{File.join(base, name)}: #{e.message}&quot;
+  end
+
+  self.data ||= {}
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;self.content = File.read(File.join(base, name), :encoding =&amp;gt; &quot;utf-8&quot;) 把原来的注释，加上这行代码。&lt;/p&gt;
+
+&lt;p&gt;二、创建github账户&lt;/p&gt;
+&lt;p&gt;1、windows下操作，下载windows github，并在github上创建项目，名字是USERNAME.github.io。打开windows github，下载刚创建的项目，然后进入目录。&lt;/p&gt;
+&lt;p&gt;下载&lt;a href=&quot;https://github.com/plusjade/jekyll-bootstrap&quot; target=&quot;_blank&quot;&gt;jekyll-bootstrap&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;解压后把.gitignore删掉，然后把文件夹里的内容，复制到自己的文件里。&lt;/p&gt;
+&lt;p&gt;修改 _config.yml文件，这一行改成自己的production_url : http://USERNAME.github.io&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;jekyll serve
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;本地运行，访问http://127.0.0.1:4000/&lt;/p&gt;
+&lt;p&gt;推送到github上&lt;/p&gt;
+
+&lt;p&gt;2、linux下，yum install rubygems ，gem install rdiscount --platform=ruby，gem install jekyll&lt;/p&gt;
+&lt;p&gt;先要在github上添加ssh key，https://help.github.com/articles/generating-ssh-keys#platform-linux&lt;/p&gt;
+&lt;p&gt;先创建项目USERNAME.github.io，不要点生成README&lt;/p&gt;
+&lt;p&gt;在命令下，创建USERNAME.github.io文件夹，并进入&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;touch README.md
+git init
+git add README.md
+git commit -m &quot;first commit&quot;
+git remote add origin https://github.com/USERNAME/USERNAME.github.io.git
+git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;剩下的同理windows&lt;/p&gt;
+
+&lt;p&gt;二、Jekyll使用&lt;/p&gt;
+&lt;p&gt;1、创建第一篇博文&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rake post title=&quot;Hello World&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;默认情况下rake命令会在你的_posts目录下创建一个名为[年-月-日-post title.md]的文件，例如2012-05-04-Hello-World.md，名称中的空格会转换成“-”，时间为当前系统时间。当然这些都是可配置的。rake命令默认不会覆盖掉相同名称的文件。&lt;/p&gt;
+&lt;p&gt;2、创建第一个页面&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# 根目录下创建页面
+$ rake page name=&quot;about.md&quot;
+
+# 自定义目录下创建页面
+$ rake page name=&quot;pages/about.md&quot;
+
+# 创建类似./pages/about/index.html目录结构的页面
+$ rake page name=&quot;pages/about&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;
+    三、域名绑定，这里有
+    &lt;a href=&quot;https://help.github.com/articles/setting-up-a-custom-domain-with-pages&quot; target=&quot;_blank&quot;&gt;详细介绍&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;四、一点小补充&lt;/p&gt;
+&lt;p&gt;git 命令&lt;/p&gt;
+&lt;p&gt;1、推送&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git add .
+git commit -m &#39;test&#39;
+git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、更新&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git pull origin master
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>saltstack 学习小记</title>
+        <link href="http://xpmozong.github.io/python/2013/09/05/python-saltstack"/>
+        <updated>2013-09-05T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/python/2013/09/05/python-saltstack</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/python/2013/09/05/python-saltstack/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;saltstack的基本介绍&lt;/p&gt;
+&lt;p&gt;salt是一个新的基础平台管理工具。很短的时间即可运行并使用起来, 扩展性足以支撑管理上万台服务器，数秒钟即可完成数据传递. 经常被描述为 Func加强版+Puppet精简版。&lt;/p&gt;
+
+&lt;p&gt;salt的安装&lt;/p&gt;
+
+&lt;p&gt;首先添加RPM源:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rpm -ivh http://mirrors.sohu.com/fedora-epel/6/x86_64/epel-release-6-8.noarch.rpm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;1、安装服务端&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum install salt-master
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;可以修改配置文件，vim /etc/salt/master 将auto_accept 改为 True，这样可以自动接收客户端&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;file_roots:
+    base:
+        - /srv/salt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个是可以控制上传的路径&lt;/p&gt;
+&lt;p&gt;启动服务端： /etc/init.d/salt-minion start&lt;/p&gt;
+
+&lt;p&gt;2、安装客户端&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum install salt-minion
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改配置文件，vim /etc/salt/minion master:xxxxxxx   id:xxxxxx&lt;/p&gt;
+&lt;p&gt;启动客户端：/etc/init.d/salt-minion start&lt;/p&gt;
+
+&lt;p&gt;3、salt命令&lt;/p&gt;
+&lt;p&gt;salt-key -L  列表&lt;/p&gt;
+&lt;p&gt;salt &#39;*&#39; grains.ls  查看grains分类&lt;/p&gt;
+&lt;p&gt;salt &#39;*&#39; grains.items 查看grains所有信息&lt;/p&gt;
+&lt;p&gt;salt &#39;*&#39; grains.item osrelease 查看grains某个信息&lt;/p&gt;
+&lt;p&gt;命令啥的，就不解释了，参考&lt;a target=&quot;_blank&quot; href=&quot;http://wiki.saltstack.cn/modules/all&quot;&gt;salt内置执行模块列表&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;4、相关文档 &lt;/p&gt;
+&lt;p&gt;&lt;a target=&quot;_blank&quot; href=&quot;http://wiki.saltstack.cn/&quot;&gt;saltstack社区&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;5、salt开发&lt;/p&gt;
+&lt;p&gt;python开发&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import salt.client
+client = salt.client.LocalClient()
+ret = client.cmd(&#39;*&#39;, &#39;cmd.run&#39;, [&#39;ls -l&#39;])
+print ret
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;6、&lt;a href=&quot;http://www.ituring.com.cn/article/41632&quot;&gt;SaltStack中的文件服务器&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;最近在开发一个salt管理系统，敬请期待！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>libvirt-php 学习小记</title>
+        <link href="http://xpmozong.github.io/php/2013/08/09/php-libvirt"/>
+        <updated>2013-08-09T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2013/08/09/php-libvirt</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2013/08/09/php-libvirt/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Libvirt 库是一种实现 Linux 虚拟化功能的 Linux® API，它支持各种虚拟机监控程序，包括 Xen 和 KVM，以及 QEMU 和用于其他操作系统的一些虚拟产品。&lt;/p&gt;
+
+&lt;p&gt;一、安装libvirt环境&lt;/p&gt;
+&lt;p&gt;(1)、yum install virt-manager libvirt libvirt-python python-virtinst -y&lt;/p&gt;
+&lt;p&gt;(2)、升级&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum -y install gcc gcc-c++
+yum install libxml2-devel gnutls-devel device-mapper-devel python-devel libnl-devel -y
+wget http://libvirt.org/sources/libvirt-1.1.1.tar.gz
+tar xzvf libvirt-0.9.4.tar.gz
+cd libvirt-0.9.4
+./configure
+make &amp;amp;&amp;amp; make install
+
+[root@localhost ~]# service libvirtd start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;virsh -version 可能会报错&lt;/p&gt;
+&lt;p&gt;1、error: Failed to connect socket to &#39;/usr/local/var/run/libvirt/libvirt-sock&#39;: No such file or directory&lt;/p&gt;
+&lt;p&gt;做个链接：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /var/run/libvirt/libvirt-sock /usr/local/var/run/libvirt/libvirt-sock
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;2、libvirt: Remote error : unable to connect to &#39;/usr/local/var/run/libvirt/libvirt-sock-ro&#39;: No such file or directory&lt;/p&gt;
+&lt;p&gt;再做个链接&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ln -s /var/run/libvirt/libvirt-sock-ro /usr/local/var/run/libvirt/libvirt-sock-ro
+
+[root@localhost ~]# virsh -version
+0.10.0
+[root@localhost ~]# libvirtd --version
+libvirtd (libvirt) 1.1.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;重启下电脑&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@localhost ~]# virsh -version
+1.1.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;二、创建虚拟机&lt;/p&gt;
+&lt;p&gt;1、demo.xml&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;domain type=&#39;kvm&#39;&amp;gt;
+    &amp;lt;name&amp;gt;myvm&amp;lt;/name&amp;gt; &amp;lt;!-- 名称 --&amp;gt;
+    &amp;lt;memory&amp;gt;10485760&amp;lt;/memory&amp;gt; &amp;lt;!-- 内存 --&amp;gt;
+    &amp;lt;currentMemory&amp;gt;10485760&amp;lt;/currentMemory&amp;gt;
+    &amp;lt;vcpu&amp;gt;1&amp;lt;/vcpu&amp;gt;
+    &amp;lt;os&amp;gt;
+        &amp;lt;type arch=&#39;x86_64&#39; machine=&#39;pc&#39;&amp;gt;hvm&amp;lt;/type&amp;gt; &amp;lt;!-- 系统 --&amp;gt;
+        &amp;lt;boot dev=&#39;hd&#39;/&amp;gt; &amp;lt;!-- 从硬盘启动 --&amp;gt;
+    &amp;lt;/os&amp;gt;
+    &amp;lt;features&amp;gt;
+    &amp;lt;acpi/&amp;gt;
+    &amp;lt;apic/&amp;gt;
+    &amp;lt;pae/&amp;gt;
+    &amp;lt;/features&amp;gt;
+    &amp;lt;clock offset=&#39;localtime&#39;/&amp;gt;
+    &amp;lt;on_poweroff&amp;gt;destroy&amp;lt;/on_poweroff&amp;gt;
+    &amp;lt;on_reboot&amp;gt;restart&amp;lt;/on_reboot&amp;gt;
+    &amp;lt;on_crash&amp;gt;destroy&amp;lt;/on_crash&amp;gt;
+    &amp;lt;devices&amp;gt;
+        &amp;lt;emulator&amp;gt;/usr/libexec/qemu-kvm&amp;lt;/emulator&amp;gt;
+        &amp;lt;disk type=&#39;file&#39; device=&#39;disk&#39;&amp;gt;
+            &amp;lt;source file=&#39;/data/instances/myvm/disk.qcow2&#39;/&amp;gt;
+            &amp;lt;target dev=&#39;sdb&#39; bus=&#39;virtio&#39;/&amp;gt;  &amp;lt;!-- 用sdb --&amp;gt;
+        &amp;lt;/disk&amp;gt;
+        &amp;lt;disk type=&#39;file&#39; device=&#39;disk&#39;&amp;gt;
+            &amp;lt;driver name=&#39;qemu&#39; type=&#39;qcow2&#39;/&amp;gt;
+            &amp;lt;source file=&#39;/data/instances/myvm/swap.qcow2&#39;/&amp;gt;
+            &amp;lt;target dev=&#39;sdb&#39; bus=&#39;virtio&#39;/&amp;gt;
+        &amp;lt;/disk&amp;gt;
+        &amp;lt;disk type=&#39;file&#39; device=&#39;disk&#39;&amp;gt;
+            &amp;lt;driver name=&#39;qemu&#39; type=&#39;qcow2&#39;/&amp;gt;
+            &amp;lt;source file=&#39;/data/instances/myvm/disk2.qcow2&#39;/&amp;gt;
+            &amp;lt;target dev=&#39;sdc&#39; bus=&#39;virtio&#39;/&amp;gt;
+        &amp;lt;/disk&amp;gt;
+        &amp;lt;disk type=&#39;file&#39; device=&#39;cdrom&#39;&amp;gt;
+            &amp;lt;driver name=&#39;qemu&#39; type=&#39;raw&#39;/&amp;gt;
+            &amp;lt;source file=&#39;/data/instances/myvm/meta.iso&#39;/&amp;gt; &amp;lt;!-- 这里是有作用的，稍后解释 --&amp;gt;
+            &amp;lt;target dev=&#39;hda&#39; bus=&#39;ide&#39;/&amp;gt;
+            &amp;lt;readonly/&amp;gt;
+        &amp;lt;/disk&amp;gt;
+        &amp;lt;interface type=&#39;bridge&#39;&amp;gt;
+            &amp;lt;source bridge=&#39;virbr0&#39;/&amp;gt;
+            &amp;lt;mac address=&quot;00:16:3e:5d:aa:a8&quot;/&amp;gt;
+            &amp;lt;filterref&amp;gt;
+                &amp;lt;parameter name=&#39;IP&#39; value=&#39;192.168.1.1&#39; /&amp;gt;
+            &amp;lt;/filterref&amp;gt;
+        &amp;lt;/interface&amp;gt;
+        &amp;lt;input type=&#39;mouse&#39; bus=&#39;ps2&#39;/&amp;gt;
+        &amp;lt;graphics type=&#39;vnc&#39; port=&#39;-1&#39; autoport=&#39;yes&#39; keymap=&#39;en-us&#39; listen=&#39;0.0.0.0&#39;/&amp;gt; 
+        &amp;lt;!-- ip 端口5900 累计相加 --&amp;gt;
+    &amp;lt;/devices&amp;gt;
+&amp;lt;/domain&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、定义KVM&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@localhost ~]# virsh define demo.xml 
+Domain myvm defined from demo.xml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、启动KVM&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@localhost ~]# virsh start myvm
+Domain myvm started
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;myvm 只的是demo.xml里的虚拟机名称&lt;/p&gt;
+
+&lt;p&gt;4、查看vnc信息&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@localhost ~]# virsh vncdisplay myvm
+127.0.0.1:2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5、如何修改&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;virsh edit &amp;lt;Name of KVM&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;6、查看运行中的虚拟机&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@localhost ~]# virsh list
+[root@localhost ~]# virsh list --all
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7、meta.iso 是什么呢？&lt;/p&gt;
+&lt;p&gt;创建完一台虚拟机后，要给虚拟机分配IP，挂载磁盘，所以要先把要配置的信息存入一个文件，做成iso，然后挂载上，虚拟机在开机的时候，挂载上文件，读取他，处理他。这个脚本，运维的人会写，很简单的事。格式自己定。&lt;/p&gt;
+&lt;p&gt;例如meta.js文件转成meta.iso的命令是：mkisofs -r -o meta.iso meta.js&lt;/p&gt;
+
+&lt;p&gt;三、用python创建虚拟机&lt;/p&gt;
+&lt;p&gt;demo.xml  注意，虚拟机名字要换一下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#encoding:utf8
+import libvirt
+
+uri=&#39;qemu:///system&#39;
+conn =libvirt.open(uri) #这里要用读写的方式打开连接  
+
+with open(&#39;demo.xml&#39;) as f:  
+    xml = f.read()  
+
+domain = conn.defineXML(xml)  
+domain.createWithFlags(0)  
+  
+try:  
+    dom0 = conn.lookupByName(&quot;pyvm&quot;)  #虚拟机名称
+except:  
+    print &#39;Failed to find the main domain&#39;  
+    sys.exit(1)  
+  
+print &quot;Domain 0: id %d running %s&quot; % (dom0.ID(), dom0.OSType())  
+print dom0.info()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;四、用php创建虚拟机&lt;/p&gt;
+&lt;p&gt;再安装依赖包：yum -y install gcc gcc.c++ zlib libxml2 libxml2-devel libmcrypt libcrypt-devel libmhash libjpeg libpng&lt;/p&gt;
+&lt;p&gt;然后安装PHP APACHE MYSQL&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum -y install httpd httpd-devel mysql-server mysql-devel php php-devel php-gd php-mysql
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后再装libvirt-php&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;wget http://libvirt.org/sources/php/libvirt-php-0.4.8.tar.gz
+tar -zxvf libvirt-php-0.4.8.tar.gz
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd libvirt-php*
+./configure
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;编译的时候如果报错，提示You need libvirt 说明libvirt开发包没有安装好，运行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yum -y install libvirt-devel
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;最后运行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;make &amp;amp;&amp;amp; make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;建一个测试php文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;print_r( libvirt_version() );  有结果，就表示，安装成功啦
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可能有人不喜欢apache，ok，就安装nginx呗，顺便 yum -y install php-fpm&lt;/p&gt;
+&lt;p&gt;启动service php-fpm start&lt;/p&gt;
+&lt;p&gt;这里就不详细说啦&lt;/p&gt;
+
+&lt;p&gt;从 https://github.com/xpmozong/libvirt-php-examples 下载例子&lt;/p&gt;
+&lt;p&gt;[root@localhost examples]# php create.php  创建&lt;/p&gt;
+&lt;p&gt;[root@localhost examples]# php test.php    列出虚拟机列表&lt;/p&gt;
+&lt;p&gt;其中libvirt.php 里有很多函数，没写全，要添加的话参考http://libvirt.org/php/api-reference.html&lt;/p&gt;
+
+&lt;p&gt;php有执行libvirt的权限，但是apache、nginx没有这个权限，所以要赋予权限。&lt;/p&gt;
+&lt;p&gt;还有通过web访问，要设置libvirt的认证，vim /etc/libvirt/libvirtd.conf 文件 auth_tcp = &quot;none&quot;&lt;/p&gt;
+&lt;p&gt;brctl show 查看网桥&lt;/p&gt;
+
+&lt;p&gt;跟重要的是，要有VNC啊，推荐 &lt;a href=&quot;http://kanaka.github.io/noVNC/&quot; target=&quot;_blank&quot;&gt;noVNC&lt;/a&gt;&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>Windows下安装配置PHP Memcached</title>
+        <link href="http://xpmozong.github.io/php/2013/07/09/php-memcached"/>
+        <updated>2013-07-09T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2013/07/09/php-memcached</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2013/07/09/php-memcached/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;安装前准备：&lt;/p&gt;
+&lt;p&gt;
+    1. memcached 1.2.1 for Win32 binaries，这个是 Win32 服务器端的 memcached 最新版本，下载
+    &lt;a href=&quot;http://code.jellycan.com/files/memcached-1.2.6-win32-bin.zip&quot; target=&quot;_blank&quot;&gt;附件&lt;/a&gt;
+&lt;/p&gt;
+&lt;p&gt;2. php 所需的 PECL 扩展，即 php_memcache 扩展 http://windows.php.net/downloads/pecl/releases/memcache/2.2.7/&lt;/p&gt;
+
+&lt;p&gt;win7 64 位&lt;/p&gt;
+&lt;p&gt;php-5.3.4-x64 php_memcache.dll &lt;a href=&quot;http://blog.hexu.org/wp-content/uploads/2012/05/php_memcache.zip&quot;&gt;下载&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Memcache-win64 下载：&lt;/p&gt;
+&lt;p&gt;a. 下载最新版：http://blog.couchbase.com/memcached-windows-64-bit-pre-release-available&lt;/p&gt;
+&lt;p&gt;b. 直接下载： http://s3.amazonaws.com/downloads.northscale.com/memcached-win64-1.4.4-14.zip&lt;/p&gt;
+
+&lt;p&gt;安装步骤：&lt;/p&gt;
+&lt;p&gt;1. 将第一个包解压放某个盘下面，比如在c:\memcached&lt;/p&gt;
+
+&lt;p&gt;2. 在终端下输入 &#39;c:\memcached\memcached.exe -d install&#39; , memcached将作为windows的一个服务&lt;/p&gt;
+
+&lt;p&gt;3. 再输入 &#39;c:\memcached\memcached.exe -d start&#39; , 这样服务器端已经安装完毕了&lt;/p&gt;
+
+&lt;p&gt;4. 解压第二个包包，里面会只有一个 php_memcache.dll 文件，把它放入 php5/ext/ 中&lt;/p&gt;
+
+&lt;p&gt;5. 在C:\WINDOWS\php.ini 加入一行&#39;extension=php_memcache.dll&#39;&lt;/p&gt;
+
+&lt;p&gt;6.接着在 php.ini 文件里加上以下带代码，最好就放在刚才写 &quot;extension=php_memcache.dll&quot; 的下面:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[Memcache]
+memcache.allow_failover = 1
+memcache.max_failover_attempts=20
+memcache.chunk_size =8192
+memcache.default_port = 11211
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;试运行：&lt;/p&gt;
+&lt;p&gt;写一个 test.php 文件：（更多使用方法可以参看 PHP 手册里的 Memcache Functions 使用说明） &lt;/p&gt;
+&lt;p&gt;复制代码 代码如下:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;header(&#39;Content-Type:text/html;charset=utf-8&#39;);
+$memcache = new Memcache;
+$memcache-&amp;gt;connect(&#39;localhost&#39;, 11211) or die (&quot;Could not connect&quot;);
+
+$version = $memcache-&amp;gt;getVersion();
+echo &quot;Server&#39;s version: &quot;.$version.&quot;&amp;lt;br/&amp;gt;\n&quot;;
+
+$tmp_object = new stdClass;
+$tmp_object-&amp;gt;str_attr = &#39;test&#39;;
+$tmp_object-&amp;gt;int_attr = 123;
+
+$memcache-&amp;gt;set(&#39;key&#39;, $tmp_object, false, 10) or die (&quot;Failed to save data at the server&quot;);
+echo &quot;Store data in the cache (data will expire in 10 seconds)&amp;lt;br/&amp;gt;\n&quot;;
+
+$get_result = $memcache-&amp;gt;get(&#39;key&#39;);
+echo &quot;Data from the cache:&amp;lt;br/&amp;gt;\n&quot;;
+print_r($get_result);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果有输出：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Server&#39;s version: 1.2.6
+Store data in the cache (data will expire in 10 seconds)
+Data from the cache:
+stdClass Object ( [str_attr] =&amp;gt; test [int_attr] =&amp;gt; 123 ) 
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>crontab 定时执行某个域名</title>
+        <link href="http://xpmozong.github.io/nginx/2013/05/10/crontab"/>
+        <updated>2013-05-10T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/nginx/2013/05/10/crontab</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/nginx/2013/05/10/crontab/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;crontab 可以定时执行某个PHP文件，但是在实际项目中，我们用的是框架，因为不能破坏项目整体架构，所以不能定时执行某个PHP文件。&lt;/p&gt;
+
+&lt;p&gt;OK，我们换个角度来考虑，crontab可以执行linux命令啊，所以可以这么写&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#crontab -e
+
+*/1 * * * *     curl  http://xxx.com/index.php/cron/send
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样就是每分钟定时执行某个程序啦！！！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>python判断一张图片的主色调</title>
+        <link href="http://xpmozong.github.io/python/2013/04/02/python-pic-color"/>
+        <updated>2013-04-02T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/python/2013/04/02/python-pic-color</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/python/2013/04/02/python-pic-color/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;python判断一张图片的主色调，多个颜色&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/env python
+#encoding:utf8
+
+import colorsys
+from PIL import Image
+import optparse
+
+
+def get_dominant_color(image):
+    &quot;&quot;&quot;
+    Find a PIL image&#39;s dominant color, returning an (r, g, b) tuple.
+    &quot;&quot;&quot;
+
+    image = image.convert(&#39;RGBA&#39;)
+
+    # Shrink the image, so we don&#39;t spend too long analysing color
+    # frequencies. We&#39;re not interpolating so should be quick.
+    # image.thumbnail((200, 200))
+
+    max_score = 1
+    dominant_color = []
+
+    for count, (r, g, b, a) in image.getcolors(image.size[0] * image.size[1]):
+        # Skip 100% transparent pixels
+        if a == 0:
+            continue
+
+        # Get color saturation, 0-1
+        saturation = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)[1]
+
+        # Calculate luminance - integer YUV conversion from
+        # http://en.wikipedia.org/wiki/YUV
+        y = min(abs(r * 2104 + g * 4130 + b * 802 + 4096 + 131072) &amp;gt;&amp;gt; 13, 235)
+
+        # Rescale luminance from 16-235 to 0-1
+        y = (y - 16.0) / (235 - 16)
+
+        # Ignore the brightest colors
+        if y &amp;gt; 0.9:
+            continue
+
+        # Calculate the score, preferring highly saturated colors.
+        # Add 0.1 to the saturation so we don&#39;t completely ignore grayscale
+        # colors by multiplying the count by zero, but still give them a low
+        # weight.
+        score = (saturation + 0.1) * count
+        if score &amp;gt; max_score:
+            max_score = score
+            dominant_color.append((r, g, b))
+
+    return dominant_color
+
+def main():
+    img = Image.open(&quot;meitu.jpg&quot;)
+    colors = get_dominant_color(img)
+    for item in colors:
+        print &#39;#%02x%02x%02x&#39; % item
+
+if __name__ == &#39;__main__&#39;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>django1.0.4 blog Admin管理界面的激活方法</title>
+        <link href="http://xpmozong.github.io/python/2012/11/11/django-blog-admin"/>
+        <updated>2012-11-11T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/python/2012/11/11/django-blog-admin</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/python/2012/11/11/django-blog-admin/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;先django-admin startproject mysite创建一个项目
+cd mysite
+manage.py startapp blog  创建一个blog&lt;/p&gt;
+
+&lt;p&gt;1、设置数据库 settings.py&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;DATABASE_ENGINE = &#39;mysql&#39;
+DATABASE_NAME = &#39;djangodb&#39;
+DATABASE_USER = &#39;root&#39;
+DATABASE_PASSWORD = &#39;&#39;
+DATABASE_HOST = &#39;localhost&#39;
+DATABASE_PORT = &#39;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、建表
+命令行
+manage.py syncdb
+……..&lt;/p&gt;
+
+&lt;p&gt;3、设置自动admin应用 settings.py
+在django.contrib.auth下添加django.contrib.admin,mysite.blog&lt;/p&gt;
+
+&lt;p&gt;4、再次 命令行
+manage.py syncdb
+……..&lt;/p&gt;
+
+&lt;p&gt;5、urls.py内容为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from django.conf.urls.defaults import *
+
+# Uncomment the next two lines to enable the admin:
+from django.contrib import admin
+admin.autodiscover()
+
+urlpatterns = patterns(&#39;&#39;,
+    # Uncomment the next line to enable the admin:
+    (r&#39;^admin/(.*)&#39;, admin.site.root),
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意，这和老版本不太一样，当出现No module named urls时，仔细检查下此文件。&lt;/p&gt;
+
+&lt;p&gt;6、然后models.py内容为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;from django.db import models
+from django.contrib import admin
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=150)
+    body = models.TextField()
+    timestamp = models.DateTimeField()
+
+admin.site.register(BlogPost)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7、最后在浏览器运行，http://127.0.0.1:8888/admin/，就可以看到登录页面了。
+发布文章的时候，如果发现blog_blogpost表不存在，就再执行下manage.py syncdb&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>Nginx实现HTTP负载均衡</title>
+        <link href="http://xpmozong.github.io/nginx/2012/01/30/nginx"/>
+        <updated>2012-01-30T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/nginx/2012/01/30/nginx</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/nginx/2012/01/30/nginx/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;下面是配置nginx负载均衡的简单示例文件,主要作用是:&lt;/p&gt;
+&lt;p&gt;www.s135.com 和 blog.s135.com 域名均指向 Nginx 所在的服务器IP。用户访问http://www.s135.com，将其负载均衡到192.168.1.2:80、92.168.1.3:80、192.168.1.4:80、192.168.1.5:80四台服务器。用户访问http://blog.s135.com，将其负载均衡到192.168.1.7服务器的8080、8081、8082端口。获取用户真实IP.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;user  www www;
+ 
+worker_processes 10;
+ 
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+ 
+#pid        logs/nginx.pid;
+ 
+#最大文件描述符
+worker_rlimit_nofile 51200;
+ 
+events
+{
+      use epoll;
+ 
+      worker_connections 51200;
+}
+ 
+http
+{
+      include       conf/mime.types;
+      default_type  application/octet-stream;
+ 
+      keepalive_timeout 120;
+ 
+      tcp_nodelay on;
+ 
+      upstream  www.s135.com  {
+              server   192.168.1.2:80;
+              server   192.168.1.3:80;
+              server   192.168.1.4:80;
+              server   192.168.1.5:80;
+      }
+ 
+      upstream  blog.s135.com  {
+              server   192.168.1.7:8080;
+              server   192.168.1.7:8081;
+              server   192.168.1.7:8082;
+      }
+ 
+      server
+      {
+              listen  80;
+              server_name  www.s135.com;
+ 
+              location / {
+                       proxy_pass        http://www.s135.com;
+                       proxy_set_header   Host             $host;
+                       proxy_set_header   X-Real-IP        $remote_addr;
+                       proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+              }
+ 
+              log_format  www_s135_com  &#39;$remote_addr - $remote_user [$time_local] $request &#39;
+                                &#39;&quot;$status&quot; $body_bytes_sent &quot;$http_referer&quot; &#39;
+                                &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+              access_log  /data1/logs/www.log  www_s135_com;
+      }
+ 
+      server
+      {
+              listen  80;
+              server_name  blog.s135.com;
+ 
+              location / {
+                       proxy_pass        http://blog.s135.com;
+                       proxy_set_header   Host             $host;
+                       proxy_set_header   X-Real-IP        $remote_addr;
+                       proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+              }
+ 
+              log_format  blog_s135_com  &#39;$remote_addr - $remote_user [$time_local] $request &#39;
+                                &#39;&quot;$status&quot; $body_bytes_sent &quot;$http_referer&quot; &#39;
+                                &#39;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#39;;
+              access_log  /data1/logs/blog.log  blog_s135_com;
+      }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这里主要用到两个模块:&lt;/p&gt;
+&lt;p&gt;1.HTTP负载均衡模块（HTTP Upstream）,其中的一些字段解释:&lt;/p&gt;
+&lt;p&gt;server:指定后端服务器的名称和一些参数，可以使用域名，IP，端口，或者unix socket。如果指定为域名，则首先将其解析为IP.&lt;/p&gt;
+&lt;p&gt;upstream:这个字段设置一群服务器，可以将这个字段放在proxy_pass和fastcgi_pass指令中作为一个单独的实体，它们可以可以是监听不同端口的服务器，并且也可以是同时监听TCP和Unix socket的服务器。&lt;/p&gt;
+&lt;p&gt;2.HTTP代理模块（HTTP Proxy）&lt;/p&gt;
+&lt;p&gt;这个模块可以转发请求到其他的服务器。&lt;/p&gt;
+&lt;p&gt;proxy_pass:这个指令设置被代理服务器的地址和被映射的URI，地址可以使用主机名或IP加端口号的形式&lt;/p&gt;
+&lt;p&gt;proxy_set_header:这个指令允许将发送到被代理服务器的请求头重新定义或者增加一些字段。这个值可以是一个文本，变量或者它们的组合。&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>实战DoS Deflate</title>
+        <link href="http://xpmozong.github.io/linux/2012/01/29/linux-ddos"/>
+        <updated>2012-01-29T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/linux/2012/01/29/linux-ddos</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/linux/2012/01/29/linux-ddos/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;DDoS deflate是一款免费的用来防御和减轻DDoS攻击的脚本。它通过netstat监测跟踪创建大量网络连接的IP地址，在检测到某个结点超过预设的限 制时，该程序会通过APF或IPTABLES禁止或阻挡这些IP.&lt;/p&gt;
+&lt;p&gt;DDoS deflate官方网站：http://deflate.medialayer.com/&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;netstat -ntu | awk &#39;{print $5}&#39; | cut -d: -f1 | sort | uniq -c | sort -n
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行上面的命令后，&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1 Address
+1 servers)
+2 123.113.152.60
+4 59.151.36.148
+................................
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;每个IP几个、十几个或几十个连接数都还算比较正常，如果像上面成百上千肯定就不正常了。&lt;/p&gt;
+
+&lt;p&gt;好了，下面就安装DDoS deflate吧。&lt;/p&gt;
+
+&lt;p&gt;第一步：安装DDoS deflate&lt;/p&gt;
+&lt;p&gt;wget http://www.inetbase.com/scripts/ddos/install.sh&lt;/p&gt;
+&lt;p&gt;chmod 0700 install.sh&lt;/p&gt;
+&lt;p&gt;./install.sh    //安装&lt;/p&gt;
+&lt;p&gt;卸载：&lt;/p&gt;
+&lt;p&gt;wget http://www.inetbase.com/scripts/ddos/uninstall.ddos&lt;/p&gt;
+&lt;p&gt;chmod 0700 uninstall.ddos&lt;/p&gt;
+&lt;p&gt;./uninstall.ddos&lt;/p&gt;
+
+&lt;p&gt;第二步：配置DDoS deflate&lt;/p&gt;
+&lt;p&gt;下面是DDoS deflate的默认配置位于/usr/local/ddos/ddos.conf ，内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;##### Paths of the script and other files
+PROGDIR=&quot;/usr/local/ddos&quot;
+PROG=&quot;/usr/local/ddos/ddos.sh&quot;
+IGNORE_IP_LIST=&quot;/usr/local/ddos/ignore.ip.list&quot;  //IP地址白名单
+CRON=&quot;/etc/cron.d/ddos.cron&quot;    //定时执行程序
+APF=&quot;/etc/apf/apf&quot;
+IPT=&quot;/sbin/iptables&quot;
+
+##### frequency in minutes for running the script
+##### Caution: Every time this setting is changed, run the script with --cron
+#####          option so that the new frequency takes effect
+FREQ=1   //检查时间间隔，默认1分钟
+
+##### How many connections define a bad IP? Indicate that below.
+NO_OF_CONNECTIONS=150     //最大连接数，超过这个数IP就会被屏蔽，一般默认即可
+
+##### APF_BAN=1 (Make sure your APF version is atleast 0.96)
+##### APF_BAN=0 (Uses iptables for banning ips instead of APF)
+APF_BAN=1        //使用APF还是iptables。推荐使用iptables,将APF_BAN的值改为0即可。
+
+##### KILL=0 (Bad IPs are&#39;nt banned, good for interactive execution of script)
+##### KILL=1 (Recommended setting)
+KILL=1   //是否屏蔽IP，默认即可
+
+##### An email is sent to the following address when an IP is banned.
+##### Blank would suppress sending of mails
+EMAIL_TO=&quot;root&quot;   //当IP被屏蔽时给指定邮箱发送邮件，推荐使用，换成自己的邮箱即可
+
+##### Number of seconds the banned ip should remain in blacklist.
+BAN_PERIOD=600    //禁用IP时间，默认600秒，可根据情况调整
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;用户可根据给默认配置文件加上的注释提示内容，修改配置文件。&lt;/p&gt;
+
+&lt;p&gt;第三步：查看/usr/local/ddos/ddos.sh文件的第117行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;netstat -ntu | awk ‘{print $5}’ | cut -d: -f1 | sort | uniq -c | sort -nr &amp;gt; $BAD_IP_LIST
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;修改为以下代码即可！&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;netstat -ntu | awk ‘{print $5}’ | cut -d: -f1 | sed -n &#39;/[0-9]/p&#39; | sort | uniq -c | sort -nr &amp;gt; $BAD_IP_LIST
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK了！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>php查找一个单词在一个文件中的第几行第几列</title>
+        <link href="http://xpmozong.github.io/php/2012/01/17/php-search-word"/>
+        <updated>2012-01-17T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2012/01/17/php-search-word</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2012/01/17/php-search-word/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在写这个程序之前，先回忆相关的代码。&lt;/p&gt;
+&lt;p&gt;1、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$file = &quot;aa.txt &quot;; 
+$file_array = file($file); 
+$file_line_num = count($file_array); 
+echo $file_line_num;die;    //获得这个文件有多少行
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$txt = file(&#39;aa.txt&#39;);
+echo $txt[2];die;   //输出第三行
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、有一个很大的日志文件，要读出最后100行，怎么办？&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$commandstr=&quot;tail -n 100 aa.txt&amp;gt;online.txt&quot;; //把server.log的最后100行重定向到online.txt中
+system($commandstr); //调用系统命令
+$file_handle = fopen(&quot;online.txt&quot;, &quot;r+&quot;); //以只读的方式打开online.txt文件
+while (!feof($file_handle)) {
+   $line = fgets($file_handle);
+        echo nl2br($line); //输出文件
+}
+fclose($file_handle); //关闭文件
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意，要把online.txt文件的属性设为777，还有上面程序只对linux系统下有效。&lt;/p&gt;
+
+&lt;p&gt;4、现在开始标题的程序吧&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$txt = file(&#39;aa.txt&#39;);
+foreach($txt as $key=&amp;gt;$value) {
+    if(preg_match(&#39;/heaven/&#39;,$value)) {
+        $strarr = explode(&#39; &#39;,$value);
+        foreach($strarr as $k =&amp;gt; $v) {
+            if(preg_match(&#39;/heaven/&#39;,$v)) {
+                echo ($key+1).&#39;,&#39;.($k+1).&#39; &#39;;
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP之call_user_func_array用法</title>
+        <link href="http://xpmozong.github.io/php/2012/01/09/php-call_user_func_array"/>
+        <updated>2012-01-09T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2012/01/09/php-call_user_func_array</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2012/01/09/php-call_user_func_array/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;直接上最简单的&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;header(&#39;Content-Type:text/html;charset=utf-8&#39;);
+class call_func{
+    function func0() {
+        echo &#39;func0&#39;;
+    }
+
+    function func1($a) {
+        echo $a;
+    }
+
+    function func2($a, $b) {
+        echo $a+$b;
+    }
+
+    function func3($a, $b, $c) {
+        echo $a+$b+$c;
+    }
+}
+
+function otest() {
+    $args = func_get_args();    
+    $num = func_num_args();
+    call_user_func_array(array(&#39;call_func&#39;,&#39;func&#39;.$num), $args);
+}
+
+otest(1,1,1);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;mixed call_user_func_array ( callback function, array param_arr ) 和 mixed call_user_func ( callback $function [, mixed $parameter [, mixed $... ]] ) 相似&lt;/p&gt;
+
+&lt;p&gt;还可以这样实例化类的，厉害吧！！！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP连接多个mysql数据库的类</title>
+        <link href="http://xpmozong.github.io/php/2012/01/06/php-mysql"/>
+        <updated>2012-01-06T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2012/01/06/php-mysql</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2012/01/06/php-mysql/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;mysql.php类&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/*
+ * 定义一个连接类,可以访问建立多个数据库连接对象
+ *
+ * author 寞踪 http://weibo.com/xpmozong
+ *
+ */
+class mysql{
+    var $dbhost;            //数据库地址
+    var $dbuser;            //数据库用户名
+    var $dbpasswd;          //数据库密码
+    var $dbpconnect = 0;    //数据库长连接
+    var $dbname;            //数据库名称
+    var $dbchart;           //数据库链接编码
+    var $dblink;            //数据库连接对象
+    var $sql;               //sql语句
+    var $res;               //sql语句执行结果
+    var $errno;             //错误信息
+ 
+    function connect($dbConfig) {
+        $this-&amp;gt;dbhost = $dbConfig[&#39;dbhost&#39;];
+        $this-&amp;gt;dbuser = $dbConfig[&#39;dbuser&#39;];
+        $this-&amp;gt;dbpasswd = $dbConfig[&#39;dbpasswd&#39;];
+        $this-&amp;gt;dbpconnect = $dbConfig[&#39;dbpconnect&#39;];
+        $this-&amp;gt;dbname = $dbConfig[&#39;dbname&#39;];
+        $this-&amp;gt;dbchart = $dbConfig[&#39;dbchart&#39;];
+        if($this-&amp;gt;dbpconnect) {
+            $this-&amp;gt;dblink = mysql_pconnect($this-&amp;gt;dbhost,$this-&amp;gt;dbuser,$this-&amp;gt;dbpasswd,1) 
+            or die(&#39;can not connect to mysql database!&#39;);
+        } else {
+            $this-&amp;gt;dblink = mysql_connect($this-&amp;gt;dbhost,$this-&amp;gt;dbuser,$this-&amp;gt;dbpasswd,1) 
+            or die(&#39;can not connect to mysql database!&#39;);
+        }
+        mysql_query(&#39;set names &#39;.$this-&amp;gt;dbchart, $this-&amp;gt;dblink);
+        mysql_select_db($this-&amp;gt;dbname, $this-&amp;gt;dblink);
+        unset($dbConfig);
+    }
+ 
+    /**
+     * 数据库执行语句
+     *
+     * @return blooean
+     *
+     */
+    function query($sql, $die_msg = 1) {
+        $this-&amp;gt;sql = $sql;
+        //可以用自定义错误信息的方法，就要压制本身的错误信息
+        $result = @mysql_query($sql, $this-&amp;gt;dblink);
+        if($result == true) {
+            return $result;
+        }else{
+            //有错误发生
+            $this-&amp;gt;errno = mysql_error($this-&amp;gt;dblink);
+            if($this-&amp;gt;errno &amp;gt;0) {
+                if($die_msg == 1) {
+                    //强制报错并且die
+                    $this-&amp;gt;msg();
+                }else{
+                    return $this-&amp;gt;errno;//无强制报错，则返回错误代码
+                }
+            }
+        }
+    }
+ 
+    /**
+     * 获得查询语句单条结果
+     *
+     * @return array
+     *
+     */
+    function getOne($sql) {
+        $this-&amp;gt;sql = $sql;
+        $this-&amp;gt;res = $this-&amp;gt;query($sql);
+        return mysql_fetch_assoc($this-&amp;gt;res);
+    }
+ 
+    /**
+     * 获得查询语句多条结果
+     *
+     * @return array
+     *
+     */
+    function getAll($sql) {
+        $this-&amp;gt;sql = $sql;
+        $this-&amp;gt;res = $this-&amp;gt;query($sql);
+        $arr = array();
+        while($row = mysql_fetch_assoc($this-&amp;gt;res)) {
+            $arr[] = $row;
+        }
+        return $arr;
+    }
+ 
+    /**
+     * 取得结果数据
+     *
+     * @param resource $query
+     *
+     * @return string
+     *
+     */
+    function result($query, $row) {
+        $query = @mysql_result($query, $row);
+        return $query;
+    }
+ 
+    /**
+     * 获得刚插入数据的id
+     *
+     * @return int id
+     *
+     */
+    function getInsertID() {
+        return ($id = mysql_insert_id($this-&amp;gt;dblink)) &amp;gt;= 0 ? $id : 
+        $this-&amp;gt;result($this-&amp;gt;query(&#39;SELECT last_insert_id()&#39;), 0);
+    }
+ 
+    /**
+     * 关闭数据库连接，当您使用持续连接时该功能失效
+     *
+     * @return blooean
+     *
+     */
+    function close() {
+        return mysql_close($this-&amp;gt;dblink);
+    }
+ 
+    /**
+     * 显示自定义错误
+     *
+     */
+    function msg() {
+        if($this-&amp;gt;errno) {
+            //可以根据错误ID，配置好一些友好的错误信息提示语句
+            $msgArr = array();
+            $msgArr[&#39;1062&#39;] = &quot;唯一性索引有重复值插入&quot;;
+            /*...更多错误代码根据实际业务再添加...*/
+            if($msgArr[$this-&amp;gt;errno]) {
+                $errMsg = $msgArr[$this-&amp;gt;errno];//已定义的错误
+            }else{
+                $errMsg = mysql_error();//未定义的错误，由默认的错误信息决定
+            }
+            echo &quot;&amp;lt;div style=&#39;color:red;&#39;&amp;gt;\n&quot;;
+                echo &quot;&amp;lt;h4&amp;gt;数据库操作错误&amp;lt;/h4&amp;gt;\n&quot;;
+                echo &quot;&amp;lt;h5&amp;gt;错误代码：&quot;.$this-&amp;gt;errno.&quot;&amp;lt;/h5&amp;gt;\n&quot;;
+                echo &quot;&amp;lt;h5&amp;gt;错误信息：&quot;.$errMsg.&quot;&amp;lt;/h5&amp;gt;\n&quot;;
+            echo &quot;&amp;lt;/div&amp;gt;&quot;;
+            unset($msgArr);
+            die;
+        }
+    }
+ 
+    function __destruct() {
+        $this-&amp;gt;dbhost;
+        $this-&amp;gt;dbuser;
+        $this-&amp;gt;dbpasswd;
+        $this-&amp;gt;dbpconnect;
+        $this-&amp;gt;dbname;
+        $this-&amp;gt;dbchart;
+        $this-&amp;gt;dblink;
+        $this-&amp;gt;sql;
+        $this-&amp;gt;res;
+        $this-&amp;gt;errno;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;测试连接&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$dbConfig1 = array( &#39;dbhost&#39;     =&amp;gt; &#39;localhost&#39;,
+                    &#39;dbuser&#39;     =&amp;gt; &#39;root&#39;,
+                    &#39;dbpasswd&#39;   =&amp;gt; &#39;&#39;,
+                    &#39;dbname&#39;     =&amp;gt; &#39;server&#39;,
+                    &#39;dbpconnect&#39; =&amp;gt; 0,
+                    &#39;dbchart&#39;    =&amp;gt; &#39;utf8&#39;);
+$db1 = new mysql();
+$db1-&amp;gt;connect($dbConfig1);
+
+$arr = $db1-&amp;gt;getOne(&quot;select * from user&quot;);
+print_r($arr);
+
+$db1-&amp;gt;close();
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>smarty 生成静态化html文件</title>
+        <link href="http://xpmozong.github.io/php/2011/11/25/php-smarty"/>
+        <updated>2011-11-25T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2011/11/25/php-smarty</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2011/11/25/php-smarty/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;静态化网页，是个基本技能。下面是smarty静态化。&lt;/p&gt;
+&lt;p&gt;打开Smarty.class.php 文件&lt;/p&gt;
+&lt;p&gt;加入以下代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 循环创建目录 
+function mk_dir($dir, $mode = 0777) 
+{ 
+    if($dir == &#39;&#39;) return true;
+    if (is_dir($dir) || @mkdir($dir,$mode)) return true; 
+    if (!$this-&amp;gt;mk_dir(dirname($dir),$mode)) return false; 
+    return @mkdir($dir,$mode); 
+} 
+
+/**
+ * 页面静态化
+ * 
+ * @param string $file_name  
+ * @param string $content
+ *
+ */
+function makeHtmlFile($filedir, $file_name, $content)
+{
+    $filedir = $filedir == &#39;&#39; ? dirname(__FILE__).&#39;/../../&#39; : $filedir;
+    //目录不存在就创建
+    if (!file_exists($filedir.$file_name)){
+        $this-&amp;gt;mk_dir($filedir);
+    }
+    if(!$fp = fopen($filedir.$file_name, &quot;w+&quot;, true)){
+        echo &#39;文件打开失败！&#39;;
+        return false;
+    }
+    if(!fwrite($fp, $content)){
+        echo &#39;文件写入失败！&#39;;
+        return false;
+    }
+    fclose($fp);
+    if(chmod($filedir.$file_name,0777)){
+        return true;
+    }else{
+        echo &#39;改变文件权限失败！&#39;;
+        return false;
+    }   
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;加好了之后，就是调用了。怎么调用呢，看一下代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//  $smarty-&amp;gt;display(&#39;index.html&#39;);
+$content = $smarty-&amp;gt;fetch(&#39;index.html&#39;);
+$smarty-&amp;gt;makeHtmlFile(&#39;html/index.html&#39;,$content);//生成
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后到html目录下，查看，就可以看到生成的静态化文件啦！！！&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP:XML与数组互相转换</title>
+        <link href="http://xpmozong.github.io/php/2011/10/20/php-xml"/>
+        <updated>2011-10-20T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2011/10/20/php-xml</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2011/10/20/php-xml/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * 把XML转化为数组
+ *
+ */
+function xmlToArray($xml, $recursive = false )
+{
+    if (!$recursive){
+        $array = simplexml_load_string($xml);
+    } else  {
+        $array = $xml;
+    }
+
+    $newArray = array ();
+    $array = (array) $array ;
+    foreach ($array as $key =&amp;gt; $value ) {
+        $value = (array) $value ;
+        if (isset ($value [0])){
+            $newArray [$key] = trim($value [0]) ;
+        } else {
+            $newArray [$key] = self::xmlToArray($value, true) ;
+        }
+    }
+    return $newArray ;
+}
+
+/**
+ * 把数据转换为XML格式的数据
+ *
+ */
+function arraytoxml($array, $tag)
+{
+    function ia2xml($array)
+    {
+        $xml = &#39;&#39;;
+        foreach ($array as $key=&amp;gt;$value) {
+            if (is_array($value)) {
+                $xml.=&quot;&amp;lt;$key&amp;gt;&quot;.ia2xml($value).&quot;&amp;lt;/$key&amp;gt;&quot;;
+            } else {
+                $xml.=&quot;&amp;lt;$key&amp;gt;&quot;.$value.&quot;&amp;lt;/$key&amp;gt;&quot;;
+            }
+        }
+        return $xml;
+    }
+
+    return simplexml_load_string(&quot;&amp;lt;$tag&amp;gt;&quot;.ia2xml($array).&quot;&amp;lt;/$tag&amp;gt;&quot;);
+}
+
+$test[&#39;type&#39;]=&#39;lunch&#39;;
+$test[&#39;time&#39;]=&#39;12:30&#39;;
+$test[&#39;menu&#39;]=array(&#39;entree&#39;=&amp;gt;&#39;salad&#39;, &#39;maincourse&#39;=&amp;gt;&#39;steak&#39;);
+
+//  header(&#39;Content-type:text/xml; charset=utf-8&#39;);
+//  echo arraytoxml($test,&quot;meal&quot;)-&amp;gt;asXML();
+$string = &quot;&amp;lt;?xml version=&#39;1.0&#39;?&amp;gt; 
+&amp;lt;document&amp;gt;
+&amp;lt;title&amp;gt;Forty What?&amp;lt;/title&amp;gt;
+&amp;lt;from&amp;gt;Joe&amp;lt;/from&amp;gt;
+&amp;lt;to&amp;gt;Jane&amp;lt;/to&amp;gt;
+&amp;lt;body&amp;gt;
+I know that&#39;s the answer -- but what&#39;s the question?
+&amp;lt;/body&amp;gt;
+&amp;lt;/document&amp;gt;&quot;;
+
+//echo $string;
+print_r(xmlToArray($string));
+&lt;/code&gt;&lt;/pre&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP:在循环内或外实例化类在占用内存上有很大的区别</title>
+        <link href="http://xpmozong.github.io/php/2011/10/20/php-mem"/>
+        <updated>2011-10-20T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2011/10/20/php-mem</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2011/10/20/php-mem/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;先来一个test1.php&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class ABC{
+    public $numBox = array();
+    public function ddd(){
+        for($i = 1; $i &amp;lt;= 600; $i++){
+            $this-&amp;gt;numBox[] = mt_rand(1,1000000);
+        }
+        echo &#39;Now memory_get_usage: &#39;.memory_get_usage().&#39;&amp;lt;br /&amp;gt;&#39;;
+    }
+}
+$instance = new ABC();
+for($i = 0; $i&amp;lt; 50; $i++){
+    $instance-&amp;gt;ddd();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这是test1.php的运行结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Now memory_get_usage: 422728
+Now memory_get_usage: 474824
+Now memory_get_usage: 522824
+Now memory_get_usage: 579024
+Now memory_get_usage: 627024
+Now memory_get_usage: 675024
+Now memory_get_usage: 739408
+Now memory_get_usage: 787416
+Now memory_get_usage: 835416
+Now memory_get_usage: 883416
+Now memory_get_usage: 931416
+Now memory_get_usage: 979416
+Now memory_get_usage: 1027416
+..................
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;再来一个test2.php&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;class ABC{
+    public $numBox = array();
+    public function ddd(){
+        for($i=1; $i&amp;lt;=600; $i++){
+            $this-&amp;gt;numBox[] = mt_rand(1,1000000);
+        }
+        echo &#39;Now memory_get_usage: &#39;.memory_get_usage().&#39;&amp;lt;br /&amp;gt;&#39;;
+    }
+}
+for($i = 0; $i &amp;lt; 50; $i++){
+    $instance = new ABC();
+    $instance-&amp;gt;ddd();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这是test2.php的运行结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Now memory_get_usage: 422728
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+Now memory_get_usage: 422712
+............................
+&lt;/code&gt;&lt;/pre&gt;
+
+</content>
+    </entry>
+ 
+    <entry>
+        <title>用Visual Studio 2010 命令提示 运行C程序</title>
+        <link href="http://xpmozong.github.io/c/2011/10/06/c"/>
+        <updated>2011-10-06T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/c/2011/10/06/c</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/c/2011/10/06/c/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1.单击“开始”，指向“所有程序”、“Microsoft Visual Studio 2010”和“Visual Studio 工具”，然后单击“Visual Studio 2010 命令提示”。&lt;/p&gt;
+&lt;p&gt;根据计算机上的 Windows 版本和系统安全配置，可能必须右击“Visual Studio 2008 命令提示”，然后单击“以管理员身份运行”，才能成功运行按下列步骤创建的应用程序。&lt;/p&gt;
+
+&lt;p&gt;2.在命令提示符下，键入 notepad simple.c，并按 Enter。&lt;/p&gt;
+&lt;p&gt;在系统提示是否创建文件时，单击“是”。&lt;/p&gt;
+
+&lt;p&gt;3.在记事本中，键入下列各行。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;
+int main()
+{
+    printf(&quot;This is a native C program.\n&quot;);
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4.在“文件”菜单上，单击“保存”，以创建 C 源文件。&lt;/p&gt;
+&lt;p&gt;5.关闭记事本。&lt;/p&gt;
+&lt;p&gt;6.在命令提示符下，键入 cl simple.c，并按 Enter。&lt;/p&gt;
+&lt;p&gt;cl.exe 编译器将生成一个可执行程序 simple.exe。&lt;/p&gt;
+&lt;p&gt;您可以在编译器显示的多行输出信息中看到可执行程序的名称。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00 for 80x86
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+simple.c
+Microsoft (R) Incremental Linker Version 10.00
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:simple.exe
+simple.obj
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7.若要查看 \simple\ 目录中的所有文件的列表，请键入 dir simple.* 并按 Enter。&lt;/p&gt;
+
+&lt;p&gt;.obj 文件是一个中间格式文件，可以安全地忽略它。&lt;/p&gt;
+
+&lt;p&gt;8.若要运行 simple.exe，请键入 simple 并按 Enter。&lt;/p&gt;
+
+&lt;p&gt;该程序显示以下文本并退出：&lt;/p&gt;
+
+&lt;p&gt;This is a native C program.&lt;/p&gt;
+
+&lt;p&gt;9.若要关闭命令提示符窗口，请键入 exit 并按 Enter。&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>前端优化，利用.htaceess控制图片，js，css缓存时间提升加载速度</title>
+        <link href="http://xpmozong.github.io/html/2011/09/26/htaceess-speed"/>
+        <updated>2011-09-26T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/html/2011/09/26/htaceess-speed</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/html/2011/09/26/htaceess-speed/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前端优化，利用.htaceess控制图片，js，css缓存时间提升网页加载速度。&lt;/p&gt;
+
+&lt;p&gt;Add an Expires or a Cache-Control Header：&lt;/p&gt;
+
+&lt;p&gt;简单点说：就是缓存一下不常修改的文件，提升访问速度。&lt;/p&gt;
+&lt;p&gt;再简单点说：就是在.htaccess文件中写入以下内容：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;IfModule mod_expires.c&amp;gt;
+    ExpiresActive On
+    ExpiresDefault A600
+    ExpiresByType image/x-icon A2592000
+    ExpiresByType application/x-javascript A2592000
+    ExpiresByType text/css A604800
+    ExpiresByType image/gif A2592000
+    ExpiresByType image/png A2592000
+    ExpiresByType image/jpeg A2592000
+    ExpiresByType text/plain A86400
+    ExpiresByType application/x-shockwave-flash A2592000
+    ExpiresByType video/x-flv A2592000
+    ExpiresByType application/pdf A2592000
+    ExpiresByType text/html A600
+&amp;lt;/IfModule&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;解释一下。ExpiresByType 是通过MIME类型来设置具体文件的缓存时间，A表示访问，A后面的数字表示访问后的缓存时间。AddOutputFilterByType表示根据后面 的MIME类型来压缩文件，这里对css，html，gif，jpeg，png，JavaScript等进行gzip压缩。
+更多选项请参考apache手册吧。&lt;/p&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>10+ 字符串相关的 PHP 代码片段</title>
+        <link href="http://xpmozong.github.io/php/2011/09/23/php-string"/>
+        <updated>2011-09-23T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2011/09/23/php-string</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2011/09/23/php-string/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;1、自动移除字符串中的 HTML 标记&lt;/p&gt;
+
+&lt;p&gt;在用户表单中，你可能希望移除所有不必要的 HTML 标记。使用 strip_tags() 函数可以简单地做到这一点：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$text = strip_tags($input, &quot;&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、获取 $start 和 $end 之间的文本&lt;/p&gt;
+
+&lt;p&gt;这是一种每个网站开发人员应该收纳在开发工具箱的功能：给定一个字符串，一个起始位置，一个结束为止，并返回包含在 $start 和 $end 两者之间的文本。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function GetBetween($content,$start,$end){
+    $r = explode($start, $content);
+    if (isset($r[1])){
+        $r = explode($end, $r[1]);
+        return $r[0];
+    }
+    return &#39;&#39;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、将 URL 转换为超链接&lt;/p&gt;
+
+&lt;p&gt;如果你在 WordPress 博客的评论表单中添加了 URL，它会被自动转换为超级链接。如果你想要在网站上实现同样的功能，可以使用以下代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$url = &quot;芒果 (http://www.mangguo.org)&quot;;
+$url = preg_replace(&quot;#http://([A-z0-9./-]+)#&quot;, &#39;$0&#39;, $url);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4、将文本分割为 140 字符的数组&lt;/p&gt;
+
+&lt;p&gt;大家都知道，Twitter 仅仅接受 140 字符以内的消息。如果你希望与这个流行的即时信息网站交互，肯定会喜欢这个功能，这将允许对留言截断为 140 个字符。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function split_to_chunks($to,$text){
+    $total_length = (140 - strlen($to));
+    $text_arr = explode(&quot; &quot;,$text);
+    $i=0;
+    $message[0]=&quot;&quot;;
+    foreach ($text_arr as $word){
+        if ( strlen($message[$i] . $word . &#39; &#39;) &amp;lt;= $total_length ){
+            if ($text_arr[count($text_arr)-1] == $word){
+                $message[$i] .= $word;
+            } else {
+                $message[$i] .= $word . &#39; &#39;;
+            }
+        } else {
+            $i++;
+            if ($text_arr[count($text_arr)-1] == $word){
+                $message[$i] = $word;
+            } else {
+                $message[$i] = $word . &#39; &#39;;
+            }
+        }
+    }
+    return $message;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5、从字符串中移除 URL&lt;/p&gt;
+
+&lt;p&gt;为了获得流量或者反向链接，很多访客会发布大量含有网址信息的博客评论，这个代码片段可以对其进行有效防范：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$string = preg_replace(&#39;/\b(https?|ftp|file):\/\/[-A-Z0-9+&amp;amp;@#\/%?=~_|$!:,.;]*[A-Z0-9+&amp;amp;@#\/%=~_|$]/i&#39;, &#39;&#39;, $string);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;6、转换字符串为缩略标题&lt;/p&gt;
+
+&lt;p&gt;创建缩略标题（通常称之为 permalink，即固定链接）有利于 SEO，以下函数以一个字符串作为参数，并返回良好的缩略字符串。简洁有效，值得尝试！&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function slug($str){
+    $str = strtolower(trim($str));
+    $str = preg_replace(&#39;/[^a-z0-9-]/&#39;, &#39;-&#39;, $str);
+    $str = preg_replace(&#39;/-+/&#39;, &quot;-&quot;, $str);
+    return $str;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7、解析 CSV 文件&lt;/p&gt;
+
+&lt;p&gt;CSV（逗号分隔的值文件）是存储数据的简单方式，使用 PHP 解析也很容易。不信你可以动手试试以下代码片段。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$fh = fopen(&quot;contacts.csv&quot;, &quot;r&quot;);
+while($line = fgetcsv($fh, 1000, &quot;,&quot;)) {
+    echo &quot;Contact: {$line[1]}&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;8、检索字符串中的另一个字符串&lt;/p&gt;
+
+&lt;p&gt;如果某个字符串包含在另一个字符串中，并且必须检索出来，这里有一个绝妙的方法：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function contains($str, $content, $ignorecase=true){
+    if ($ignorecase){
+        $str = strtolower($str);
+        $content = strtolower($content);
+    }
+    return strpos($content,$str) ? true : false;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;9、检测某个字符串是否以指定的模式开始&lt;/p&gt;
+
+&lt;p&gt;有些语言比如 Java 具有一个 startWith 方法，允许你检测某个字符串是否以指定的模式开始。不幸的是，PHP 不具备这种内建函数。但我们可以自己动手丰衣足食，实现也很简单：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function String_Begins_With($needle, $haystack {
+    return (substr($haystack, 0, strlen($needle))==$needle);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;10、从字符串中提取电子邮件地址&lt;/p&gt;
+
+&lt;p&gt;有没有想过那些发垃圾邮件的人是如何得到邮件地址的？这很简单，他们只需对网页进行简单的 HTML 解析即可提取电子邮件。此代码需要一个字符串作为参数，并打印所包含的电子邮件地址。芒果告诫：请勿使用此代码制造垃圾邮件！&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function extract_emails($str){
+    // This regular expression extracts all emails from a string:
+    $regexp = &#39;/([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i&#39;;
+    preg_match_all($regexp, $str, $m);
+
+    return isset($m[0]) ? $m[0] : array();
+}
+
+$test_string = &#39;This is a test string...
+
+        test1@example.org
+
+        Test different formats:
+        test2@example.org;
+        &amp;lt;a href=&quot;test3@example.org&quot;&amp;gt;foobar&amp;lt;/a&amp;gt;
+        &amp;lt;test4@example.org&amp;gt;
+
+        strange formats:
+        test5@example.org
+        test6[at]example.org
+        test7@example.net.org.com
+        test8@ example.org
+        test9@!foo!.org
+
+        foobar
+&#39;;
+
+print_r(extract_emails($test_string));
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>DIV层遇到FLASH不显示的问题</title>
+        <link href="http://xpmozong.github.io/html/2011/09/23/div-flash"/>
+        <updated>2011-09-23T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/html/2011/09/23/div-flash</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/html/2011/09/23/div-flash/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;经常遇到 Flash 插入到网页 Div 层后就不显示了。解决方法是将插入到网页中的 Flash 设置为透明 flash，将 wmode 赋值为 transparent，以下为旧式插入方式：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;object classid=clsid:D27CDB6E-AE6D-11cf-96B8-444553540000 codebase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0 width=550 height=400&amp;gt;
+&amp;lt;param name=movie value=test.swf&amp;gt;
+&amp;lt;param name=quality value=high&amp;gt;
+&amp;lt;param name=wmode value=transparent&amp;gt;
+&amp;lt;embed src=http://www.59bj.com/test.swf width=550 height=400 quality=high pluginspage=http://www.macromedia.com/go/getflashplayer type=application/x-shockwave-flash wmode=transparent&amp;gt;&amp;lt;/embed&amp;gt;
+&amp;lt;/object&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>redis 浅见</title>
+        <link href="http://xpmozong.github.io/redis/2011/08/19/redis-humble-opinion"/>
+        <updated>2011-08-19T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/redis/2011/08/19/redis-humble-opinion</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/redis/2011/08/19/redis-humble-opinion/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以前只会安装redis，和使用string类型，这个星期，为了使自己更懂一点，所以看了很多关于redis的文章。所以写了这篇浅谈博客，有观点不准确的地方，可以纠正我。&lt;/p&gt;
+
+&lt;p&gt;在NoSql领域中，redis占据着重要位置。她小儿精悍，被比喻作AK-47。&lt;/p&gt;
+
+&lt;p&gt;下面要讨论的是redis的数据类型，关于aof日志文件，以及rediska的使用。&lt;/p&gt;
+
+&lt;p&gt;一、Redis的数据类型Strings, integers, lists, hashes, sets, sorted sets&lt;/p&gt;
+
+&lt;p&gt;他们的用法如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1、Strings
+
+&amp;gt; set foo bar
+OK
+&amp;gt;get foo
+&quot;bar&quot;
+
+2、integer
+
+&amp;gt;set mykey &quot;10&quot;
+OK 
+&amp;gt;incr mykey
+(integer) 11
+&amp;gt;get mykey
+&quot;11&quot;
+&amp;gt;decr mykey
+(integer) 10
+&amp;gt;get mykey
+&quot;10&quot;
+
+
+3、Lists
+
+&amp;gt;rpush foo baz
+(integer) 1
+&amp;gt;rpush foo qux
+(integer) 2
+&amp;gt;lpush foo bar
+(integer) 3
+&amp;gt;lrange foo 0 -1
+&quot;bar&quot;
+&quot;baz&quot;
+&quot;qux&quot;
+&amp;gt;lrange foo 0 1
+&quot;bar&quot;
+&quot;baz&quot;
+&amp;gt;lpop foo
+&quot;bar&quot;
+&amp;gt;rpop foo
+&quot;qux&quot;
+
+4、Hashes
+
+&amp;gt;hset foo bar baz
+(integer) 1
+&amp;gt;hset foo qux quxx
+(integer) 1
+&amp;gt;hget foo bar
+&quot;baz&quot;
+&amp;gt;hgetall foo
+&quot;bar&quot;
+&quot;baz&quot;
+&quot;qux&quot;
+&quot;quxx&quot;
+
+5、Set
+
+&amp;gt;sadd m1 jan
+(integer) 1
+&amp;gt;sadd m1 feb
+(integer) 1
+&amp;gt;sismember m1 jan
+(integer) 1
+&amp;gt;sismember m1 feb
+(integer) 1
+&amp;gt;smembers m1
+&quot;feb&quot;
+&quot;jan&quot;
+&amp;gt;sadd m2 feb
+(integer) 1
+&amp;gt;sismember m2 jan
+(integer) 1
+&amp;gt;sismember m2 mar
+(integer) 1
+&amp;gt;sinter m1 m2
+&quot;feb&quot;
+&amp;gt;sdiff m1 m2
+&quot;jan&quot;
+&amp;gt;sunion m1 m2
+&quot;mar&quot;
+&quot;jan&quot;
+&quot;feb&quot;
+
+6、sorted sets
+
+&amp;gt;zadd z1 1 jan
+(integer) 1
+&amp;gt;zadd z1 2 feb
+(integer) 1
+&amp;gt;zadd z1 3 mar
+(integer) 1
+&amp;gt;zscore z1 feb
+&quot;2&quot;
+&amp;gt;zrange z1 0 1 withscores
+&quot;jan&quot;
+&quot;1&quot;
+&quot;feb&quot;
+&quot;2&quot;
+&quot;mar&quot;
+&quot;3&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;由上可知，我觉得理想的存储数据类型是lists和hashes。&lt;/p&gt;
+&lt;p&gt;昨天晚上翻了一遍算法导论的数据结构那一张。Lists相当于队列，可以lpush，rpush，lpop，rpop。Hashes相当于指针指向一块，这一块里可以包含很多数据。&lt;/p&gt;
+
+&lt;p&gt;二、Redis进阶教程-aof(append only file)日志文件&lt;/p&gt;
+&lt;p&gt;原文出处:http://lgone.com/html/y2010/757.html&lt;/p&gt;
+&lt;p&gt;今天看了Redis源码两个多小时,搞清楚了append only file(AOF)日志的rotate原理.官方文档里面对这部分做了单独的说明,但是就我看来,作者不够优美的用词,完全会让人理解错误.(PS:我要不是觉得文档有问题也不至于看源码)&lt;/p&gt;
+&lt;p&gt;何为AOF?&lt;/p&gt;
+&lt;p&gt;在Redis配置文件中有一个叫appendonly的选项,可以写yes或no.这个选项就是负责是否开启AOF日志的开关.AOF日志,你可以简单理解为MySQL binlog一样的东西,作用就是记录每次的写操作,在遇到断电等问题时可以用它来恢复数据库状态.但是他不是bin的,而是text的.一行一行,写得很规范.如果你是一台redis,那你也能人肉通过它恢复数据.&lt;/p&gt;
+&lt;p&gt;扩展知识:&lt;/p&gt;
+&lt;p&gt;Redis有三种类型的落地文件:&lt;/p&gt;
+&lt;p&gt;数据文件-在配置中可设置其位置及文件名,默认文件名dump.rdb&lt;/p&gt;
+&lt;p&gt;日志文件-在配置中也可以配置.当然,在你是以daemon方式运行的时候,这个值就不要设置为stdout了,这么设置会自动被换成/dev/null&lt;/p&gt;
+&lt;p&gt;AOF文件-也就是我们这篇文章的主角,他的作用是用于数据恢复.他除了设置是否开启外,还可以设置开启后以何种方式写日志.这个何种一共是三种,1是每次写操作都保证将fsync()来完成的,2是每秒调用一次fsync(),3是从不调用,让操作系统自己来同步.当然,设置为不同,效率会不同,你的数据损失风险也不同.&lt;/p&gt;
+&lt;p&gt;运行流程&lt;/p&gt;
+&lt;p&gt;既然是log文件,而且是要用于恢复的,那么我们动动脚趾都能想到,这玩意肯定会越来越大,不管你的应用是大是小,如果AOF文件只增不减的话,那文件将会无限长大,这个问题是所有binlog都会遇到的.而通常遇到这种问题都会有一个rotate方案.就是当日志达到一定大小或者每隔一段时间将日志写到新的一个文件中,旧日志文件可以用来备份或其它.&lt;/p&gt;
+&lt;p&gt;而Redis的AOF还和rotate略有不同,他用了一种比较简单的方法,就是先给当前的所有数据做一个快照.然后再在这个快照的基础上写接下来的日志.&lt;/p&gt;
+&lt;p&gt;照快照的好处是,你之前可能用了10w次操作共改变了100条数据(比如在一条数据上进行了多次操作).那这时你AOF中的10w条写操作记录就变成了100条记录.相当于将前面的执行全部合并了.原本很大AOF变小了.&lt;/p&gt;
+&lt;p&gt;执行这个操作的命令是:BGREWRITEAOF (background rewrite append only file)&lt;/p&gt;
+&lt;p&gt;这个快照长什么样呢?基本和一般的写日志没什么两样,也是一条一条的写记录..比如现在Redis中总共存了3条string类型的数据a=&amp;gt;1,b=&amp;gt;2,c=&amp;gt;3.那这个快照的基本内容就是写入a=&amp;gt;1,写入b=&amp;gt;2,写入c=&amp;gt;3.&lt;/p&gt;
+&lt;p&gt;这时候要用AOF进行恢复的时候,只要先执行了前面几条,就能够恢复当前状态,然后再执行之后来的写操作,就能完全重现数据了.&lt;/p&gt;
+&lt;p&gt;内部实现&lt;/p&gt;
+&lt;p&gt;我们大概知道了执行BGREWRITEAOF时都发生了什么,下面来说一下Redis是如何实现的.分下面几步:&lt;/p&gt;
+&lt;p&gt;fork! Redis通过fork产生子进程.&lt;/p&gt;
+&lt;p&gt;子进程对当前数据执行遍历操作,将当前所有数据都生成一条写入日志,将这些日志写入一个临时文件.(其实是子进程写了一个临时文件,又再rename成了另一个临时文件)&lt;/p&gt;
+&lt;p&gt;父子进程是并行执行的,在子进程遍历并写临时文件的时候,父进程在照常接收请求,处理请求,写AOF,不过这时他是把新来的AOF写在一个缓冲区中.&lt;/p&gt;
+&lt;p&gt;当子进程完成遍历操作,写完临时文件后,就会退出.这时父进程的wait3函数会接收到子进程退出的消息,他会把自己现在收集在缓冲区中的所有AOF追加在临时文件中.&lt;/p&gt;
+&lt;p&gt;最后一步,把临时文件rename一下,改名为appendonly.aof,这时原来的aof文件被覆盖.整个过程完成.&lt;/p&gt;
+&lt;p&gt;如果你的AOF文件稍微大点,你可以在一个终端执行BGREWRITEAOF,然后立刻ls 连着查看几次redis的data目录,就可以看到,先生成了一个临时文件,临时文件比原来的appendonly.aof小一些,然后临时文件消失,而原来的appendonly.aof变小了,其实就是临时文件rename成了appendonly.aof..覆盖了原来的大文件.看起来像是临时文件消失了.&lt;/p&gt;
+&lt;p&gt;其它&lt;/p&gt;
+&lt;p&gt;可能你要说,随着数据的增多,aof文件肯定也是越来越大的啊..这个没错,因为当你有10w条记录的时候,你至少要有10w条纯添加日志.然而这时候你的数据文件也应该够大了吧..更何况这日志文件呢.&lt;/p&gt;
+
+&lt;p&gt;三、在windows环境下，phper想使用php操作redis，那怎么办呢？&lt;/p&gt;
+&lt;p&gt;给大家推荐一个rediska，使用rediska来代替phpredis模块。&lt;/p&gt;
+&lt;p&gt;用法很简单，如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;---
+require &#39;Rediska.php&#39;;
+$rediska = new Rediska();
+$rediska -&amp;gt;connect(&#39;127.0.0.1&#39;,6379);
+$rediska -&amp;gt;set(&#39;test&#39;,&#39;hello world!&#39;);
+echo $rediska -&amp;gt;get(&#39;test&#39;);
+---
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+    </entry>
+ 
+    <entry>
+        <title>PHP按比例缩放图</title>
+        <link href="http://xpmozong.github.io/php/2011/08/08/php-thumbnails"/>
+        <updated>2011-08-08T00:00:00+08:00</updated>
+        <id>http://xpmozong.github.io/php/2011/08/08/php-thumbnails</id>
+        <content type="html">
+&lt;ul&gt;
+    &lt;li&gt;作者：&lt;a href=&quot;http://weibo.com/xpmozong&quot; target=&quot;blank&quot;&gt;寞踪&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;本文地址：http://xpmozong.github.io/php/2011/08/08/php-thumbnails/&lt;/li&gt;
+    &lt;li&gt;转载请注明出处&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;// upload.php文件内容
+$uid = 3;
+$time = time();
+// 图片目录
+$img_dir = &quot;upload/&quot;;
+// 把图片传到服务器
+// 初始化变量
+$uploaded = 0;
+$unuploaded = 0;
+$imgname = $uid.$time;
+//只允许三张图片上传
+for ($i=0; $i&amp;lt;=2; $i++) {
+    //获取当前图片的信息
+    $is_file = $_FILES[&#39;imgfile&#39;][&#39;name&#39;][$i];
+    //如果当前图片不为空
+    if (!empty($is_file)) {
+        // 判断上传的图片的类型是不是jpg,gif,png,bmp中的一种，同时判断是否上传成功
+        $imgtypearr = array(&#39;image/jpeg&#39;,&#39;image/gif&#39;,&#39;image/png&#39;,&#39;image/bmp&#39;);
+        $imgtype = $_FILES[&#39;imgfile&#39;][&#39;type&#39;][$i];
+        if (in_array($imgtype,$imgtypearr)) {
+            move_uploaded_file($_FILES[&#39;imgfile&#39;][&#39;tmp_name&#39;][$i], $img_dir.$imgname.$is_file);
+            //按比例缩放图片
+            if(resizeImage($img_dir.$imgname.$is_file,330,380,$img_dir.$imgname.$is_file)){
+                echo $is_file.&quot;缩小图片成功！&quot;;
+            }else{
+                echo $is_file.&quot;上传图片失败！&quot;;
+            }
+        }else{
+            echo $is_file.&#39;图片格式不对！&#39;;
+        }
+    }
+}
+
+/**
+* 按比例缩小图片
+*
+* @param string $im 源文件
+* @param int $maxwidth 规定图片宽 324px
+* @param int $maxhidth 规定图片高 343px
+* @param int $maxwidth 输出文件
+*
+* 返回文件
+*
+*/
+function resizeImage($im,$maxwidth,$maxheight,$to)
+{
+    // 载入图像到php到变量中
+    $suffix = substr(strrchr($im,&#39;.&#39;),1); //strrchr返回最后的.jpg 或者.jpeg
+    $style = strtolower($suffix);
+    if($style==&#39;jpg&#39; || $style==&#39;jpeg&#39;){
+        $originail = imagecreatefromjpeg($im); //jpg
+    }elseif($style==&#39;png&#39;){
+        $originail = imagecreatefrompng($im); //png
+    }elseif($style==&#39;gif&#39;){
+        $originail = imagecreatefromgif($im); //gif
+    }
+    $dims = getimagesize($im); //获取图片大小；
+    //Array ( [0] =&amp;gt; 800 [1] =&amp;gt; 600 
+    [2] =&amp;gt; 2 [3] =&amp;gt; width=&quot;800&quot; height=&quot;600&quot; 
+    [bits] =&amp;gt; 8 [channels] =&amp;gt; 3 [mime] =&amp;gt; image/jpeg )
+    $pic_width = $dims[&#39;0&#39;];
+    $pic_height = $dims[&#39;1&#39;];
+    if(($maxwidth &amp;amp;&amp;amp; $pic_width &amp;gt; $maxwidth) || ($maxheight &amp;amp;&amp;amp; $pic_height &amp;gt; $maxheight))
+    {
+        $resizewidth_tag = false;
+        $resizeheight_tag = false;
+
+        if($maxwidth &amp;amp;&amp;amp; $pic_width&amp;gt;$maxwidth){
+            $widthratio = $maxwidth/$pic_width;
+            $resizewidth_tag = true;
+        }
+
+        if($maxheight &amp;amp;&amp;amp; $pic_height&amp;gt;$maxheight){
+            $heightratio = $maxheight/$pic_height;
+            $resizeheight_tag = true;
+        }
+
+        if($resizewidth_tag &amp;amp;&amp;amp; $resizeheight_tag){
+            if($widthratio&amp;lt;$heightratio)
+                $ratio = $widthratio;
+            else
+                $ratio = $heightratio;
+        }
+
+        if($resizewidth_tag &amp;amp;&amp;amp; !$resizeheight_tag)
+            $ratio = $widthratio;
+        if($resizeheight_tag &amp;amp;&amp;amp; !$resizewidth_tag)
+            $ratio = $heightratio;
+
+        $newwidth = $pic_width * $ratio;
+        $newheight = $pic_height * $ratio;
+
+        //创建空白图像
+        $newim = imagecreatetruecolor($newwidth,$newheight);
+
+        //重采样拷贝部分图像并调整大小
+        imagecopyresampled($newim,$originail ,0,0,0,0,$newwidth,$newheight,$dims[&#39;0&#39;],$dims[&#39;1&#39;]);
+        
+    }else{
+        //创建空白图像
+        $newim = imagecreatetruecolor($dims[&#39;0&#39;],$dims[&#39;1&#39;]);
+        //重采样拷贝部分图像并调整大小
+        imagecopyresampled($newim,$originail,0,0,0,0,$dims[&#39;0&#39;],$dims[&#39;1&#39;],$dims[&#39;0&#39;],$dims[&#39;1&#39;]);
+    }
+
+    return imagejpeg($newim,$to);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PHP 按比例缩放图片&lt;/p&gt;
+</content>
+    </entry>
+ 
+ 
+</feed>
