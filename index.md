@@ -1,7 +1,7 @@
 ---
 layout: page
-title: 自由自在
-tagline: free as wind
+title: Beginman
+tagline: coding for fun.
 ---
 {% include JB/setup %}
 
