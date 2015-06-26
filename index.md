@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Beginman
-tagline: coding for fun.
+title: 追架构之路，谱全栈人生.
+tagline: 
 ---
 {% include JB/setup %}
 
