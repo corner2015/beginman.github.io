@@ -191,4 +191,3 @@ tags: [进阶]
 
 <p><strong>坚持就是胜利，必须加油！</strong></p>
 
-<p><a href="http://www.beginman.cn/wp-content/uploads/2015/04/coding1.jpg"><img src="http://www.beginman.cn/wp-content/uploads/2015/04/coding1-1024x584.jpg" alt="coding" width="640" height="365" class="alignnone size-large wp-image-395" /></a></p>
