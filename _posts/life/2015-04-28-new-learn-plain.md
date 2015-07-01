@@ -6,11 +6,7 @@ category: "进阶"
 tags: [进阶]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 # 2015年进阶计划
 
 ## 总体计划
@@ -61,5 +57,5 @@ tags: [进阶]
 - [ ]《构建高性能的Web站点》
 - [ ]《白帽子讲Web安全》
 
-** 坚持就是胜利，必须加油！**
+**坚持就是胜利，必须加油**
 
