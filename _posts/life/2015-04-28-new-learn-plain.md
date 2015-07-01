@@ -13,7 +13,6 @@ tags: [进阶]
 
 - [ ] 熟悉HTTP 协议
 - [ ] 学习TCP/IP 协议
-- [x] mongodb，redis，mysql异步句柄处理
 - [ ] 熟悉web 安全
 - [ ] Gevent异步框架学习
 - [ ] Tornado源码研究，异步学习
