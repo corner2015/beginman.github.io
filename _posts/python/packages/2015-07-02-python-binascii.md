@@ -17,15 +17,16 @@ tags: [python]
     print int('0x12', 16)	# hex
     print hex(18) == '0x12'
 
-2. ASCII char 互转
+2.ASCII char 互转
+
 
     print chr(97)
-
     # char to ASCII
     print ord('a')
     print ord('\xbc')
 
-3. ascii与16进制互转
+3.ascii与16进制互转
+
 
     import binascii
     print binascii.b2a_hex('Beginman')
@@ -40,7 +41,7 @@ tags: [python]
     print binascii.hexlify('a'), binascii.unhexlify('61')
 
 
-4. ascii与base64编码互转
+4.ascii与base64编码互转
 
     print binascii.b2a_base64('a')		# 带有换行符 \n
     import base64
