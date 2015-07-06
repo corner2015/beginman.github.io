@@ -6,52 +6,99 @@ category: "运维"
 tags: [运维]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
-<p>最讨厌的事情来了，那就是做数据迁移和服务器重新搭建，而且还是两台。我不是专业的运维人员，我特别想知道他们是怎么管理这些服务器集群的，或者他们是怎么进行成百上千台服务器搭建的。</p>
+最讨厌的事情来了，那就是做数据迁移和服务器重新搭建，而且还是两台。我不是专业的运维人员，我特别想知道他们是怎么管理这些服务器集群的，或者他们是怎么进行成百上千台服务器搭建的.
+没有办法，只能继续埋头搭建了，这里我总结了我需要做的事情：
 
-<p>没有办法，只能继续埋头搭建了，这里我总结了我需要做的事情：</p>
+# 一.安全性配置
 
-<h1>一.安全性配置</h1>
+## 1.1 更改root密码使之更加健壮
+新服务器以root身份登陆后，直接输入命令`passwd`,则更改root密码
 
-<ul>
-<li>更改root密码使之更加健壮</li>
-<li>生成普通用户</li>
-<li>ssh配置，禁用root登陆，以及更加安全性的配置</li>
-<li>运行环境配置如<code>locale</code></li>
-<li>搭建防火墙，安装Fail2Ban等防暴力破解工具</li>
-<li>做一些端口对外限制</li>
-<li>挂载硬盘，分配空间</li>
-</ul>
+    [root@fuckyou ~]# passwd
+    Changing password for user root.
+    New password:
+    Retype new password:
+    passwd: all authentication tokens updated successfully.   
+    
+## 1.2 生成普通用户
+`useradd`: 生成用户，`passwd`:设置密码，`groupadd`:生成组
 
-<h1>二.开发环境搭建</h1>
+    useradd beginman
+    passwd beginman
+   
+然后授予root权限
 
-<ul>
-<li>操作系统升级软件</li>
-<li>升级Python</li>
-<li>安装redis，并做好安全性，读写分离，备份等基础配置</li>
-<li>安装mongodb,并做好安全性，读写分离，备份等基础配置</li>
-<li>安装mysql,并做好安全性，读写分离，备份等基础配置</li>
-<li>安装Python第三方库等开发需要的东西</li>
-<li>安装其他工具，如beanstalk,rabbitmq等</li>
-<li>安装node环境</li>
-</ul>
+    chmod 775 /etc/sudoers
+    vim /etc/sudoers
+    
+    [root@rhel1 ~]# vim /etc/sudoers
+    root    ALL=(ALL)       ALL  
+    team     ALL=(ALL)       ALL                # 这个在切换时，是需要输入密码的，密码是当前普通用户的密码
+    beginman ALL=(ALL)     NOPASSWD:ALL         # 这个在切换时，不需要输入密码
+    
+    # write ok, 恢复只读状态
+    chmod 440 /etc/sudoers
+    
+## 1.3 ssh配置，禁用root登陆，以及更加安全性的配置
 
-<h1>三.测试环境搭建</h1>
+`vim /etc/ssh/sshd_config`:
 
-<ul>
-<li>搭建SVN服务器</li>
-<li>搭建Git服务器</li>
-</ul>
+- 将默认端口22 改成其他端口 如:2048
+- 禁止root用户远程登陆：修改PermitRootLogin，默认为yes且注释掉了；修改是把注释去掉，并改成no。
+- PermitEmptyPasswords   no不允许空密码用户login
 
-<h1>四.部署环境</h1>
+ssh服务器重启:
 
-<ul>
-<li>安装supervisor，并配置好启动文件</li>
-<li>安装nginx,罗列出我们需要的模块(如mongo ,etc)进行统一安装，修改配置文件做好反向代理，负载均衡等基础设置.启动该服务保障应用能够正常</li>
-</ul>
+`service sshd restart`    或 `/etc/init.d/sshd restart`
 
-<p>当然了这都是基本的，我要是想到了其他的就更新上去，这段时间我会总结下各个阶段的搭建方法，作为自己运维的小小成果吧。:-D 囧</p>
+
+## 1.4 搭建防火墙，安装Fail2Ban等防暴力破解工具
+
+参考这里:[How To Protect SSH with fail2ban on CentOS 6](https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-centos-6)
+
+## 1.5 挂载硬盘，分配空间
+
+参考这里：[Linux 系统挂载数据盘](http://help.aliyun.com/knowledge_detail/5974154.htm)
+
+# 二.开发环境搭建
+
+## 2.1 升级Python
+见这里[Centos 升级python](http://beginman.cn/python/2015/04/06/Centos-python/)
+
+升级后再安装python包，如`pip`等,这里直接给出link
+
+- [How to install pip on CentOS / RHEL / Ubuntu / Debian](http://sharadchhetri.com/2014/05/30/install-pip-centos-rhel-ubuntu-debian/)
+
+如果`pkg_resources.DistributionNotFound pip`错误, 解决方法: `easy_install –upgrade pip`
+
+如果有其他pip，如python2.6,python2.7的则`find / -name pip` 一个个的试一试，不行的那个就删掉
+
+
+
+## 2.2 安装mysql,并做好安全性，读写分离，备份等基础配置
+Centos mysql源比较旧了，不建议`yum`安装，从mysql5.5起，mysql源码安装开始使用cmake了，这里介绍编译方法.
+
+先安装需要的包：
+
+    yum install –y autoconf automake imake libxml2-devel expat-devel cmake gcc gcc-c++ libaio libaio-devel bzr bison libtool ncurses5-devel ncurses-devle
+    
+剩下的参考这里：
+
+[CentOS6.5下编译安装MySQL 5.6.16](http://www.centoscn.com/mysql/2014/0924/3833.html)
+
+安装完成修改root密码：
+
+    mysql>update user set password=PASSWORD(‘123456’) where User='root';
+
+然后允许mysql远程访问：
+
+    mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123456' WITH GRANT OPTION;
+    mysql>FLUSH RIVILEGES;
+
+## 2.3 安装redis，并做好安全性，读写分离，备份等基础配置
+
+todo
+
+## 2.4 安装mongodb,并做好安全性，读写分离，备份等基础配置
+
+todo
