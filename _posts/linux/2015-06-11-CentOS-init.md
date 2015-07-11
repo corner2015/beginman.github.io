@@ -97,8 +97,60 @@ Centos mysql源比较旧了，不建议`yum`安装，从mysql5.5起，mysql源�
 
 ## 2.3 安装redis，并做好安全性，读写分离，备份等基础配置
 
-todo
+[download and install] (http://redis.io/download)
+
+如果出现`You need tcl 8.5 or newer in order to run the Redis test`异常则参考这里[Redis: You need tcl 8.5 or newer in order to run the Redis test](http://blog.58share.com/?p=280)
+
+    yum install -y tcl
+
+
 
 ## 2.4 安装mongodb,并做好安全性，读写分离，备份等基础配置
 
 todo
+
+## 2.5 nginx服务器安装及配置文件详解
+[nginx服务器安装及配置文件详解](http://segmentfault.com/a/1190000002797601)
+
+
+## 2.6 安装rabbitmq
+    
+    # Note: We are also enabling third party remi package repositories.
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+    sudo rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+    
+    # Finally, download and install Erlang:
+    yum install -y erlang
+
+
+Once we have Erlang, we can continue with installing RabbitMQ:
+
+[rabbitmq,downlink](https://www.rabbitmq.com/install-rpm.html):
+    
+    # Download the latest RabbitMQ package using wget:
+    wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.3/rabbitmq-server-3.5.3-1.noarch.rpm
+    
+    # Add the necessary keys for verification:
+    rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+    
+    # Install the .RPM package using YUM:
+    yum install rabbitmq-server-3.5.3-1.noarch.rpm
+    
+    
+然后就是启动设置：
+
+    chkconfig rabbitmq-server on
+    
+    # To start the service:
+    service rabbitmq-server start
+    
+    # To stop the service:
+    service rabbitmq-server stop
+    
+    # To restart the service:
+    service rabbitmq-server restart
+    
+    # To check the status:
+    service rabbitmq-server status
+    
