@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>所谓魔法方法就是给类添加'magic'的能力，常以双下划线标示。对<code>__new__()</code>,<code>__init__()</code>,<code>__del__()</code>已说过，这里就略过。</p>
 
 <p><strong>使用Python的魔术方法的最大优势在于他们提供了一种简单的方法来让对象可以表现的像内置类型一样</strong></p>
