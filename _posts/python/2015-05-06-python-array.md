@@ -6,11 +6,7 @@ category: "python模块"
 tags: [python模块]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>array模块，用于提供基本数字,字符类型的数组，<strong>主要用于二进制上的缓冲区,流的操作</strong></p>
 
 <p><img src="http://beginman.qiniudn.com/pyarray.jpg" alt="" /></p>

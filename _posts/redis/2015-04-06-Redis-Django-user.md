@@ -6,11 +6,6 @@ category: "redis"
 tags: [redis]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>一.Django authentication</h1>
 
 <p><a href="https://docs.djangoproject.com/en/1.5/topics/auth/">django authentication</a>提供了一个便利的user api接口,无论在py中 <code>request.user</code>,参见<a href="https://docs.djangoproject.com/en/1.5/ref/request-response/">Request and response objects</a>.还是模板中的<code>{{user}}</code>都能随时随地使用,如果从web开发角度来看,其实无非就是cookie与session的运用.</p>

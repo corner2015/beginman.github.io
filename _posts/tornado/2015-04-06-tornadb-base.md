@@ -6,11 +6,7 @@ category: "tornado"
 tags: [tornado]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>tornado没有相应的ORM,基本通过tornadb模块，在旧版本原先是tornado.database.，它们都是轻量级的包装mysqldb.</p>
 
 <p>在项目中由于tornado版本新旧的问题，我们可以友好的处理tornadb.</p>

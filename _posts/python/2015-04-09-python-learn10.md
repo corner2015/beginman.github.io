@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><img src="http://img6.cache.netease.com/video/2012/9/29/20120929164524f8660.jpg" alt="" /></p>
 
 <h2>1.一个简单的例子</h2>

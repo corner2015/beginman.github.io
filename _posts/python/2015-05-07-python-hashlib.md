@@ -6,11 +6,7 @@ category: "python模块"
 tags: [python模块]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>该模块实现了一个通用的接口，许多不同的安全哈希和消息摘要的算法。包括的是FIPS安全散列算法SHA-1，SHA224，SHA256，SHA384，和SHA512（在FIPS180-2中定义）以及RSA的MD5算法（在因特网RFC1321中定义）。术语安全哈希和消息摘要是可互换的。旧的算法被称为消息摘要。现代的词是安全散列。</p>
 
 <pre><code>import hashlib  

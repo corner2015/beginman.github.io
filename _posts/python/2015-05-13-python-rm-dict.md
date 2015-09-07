@@ -6,11 +6,7 @@ category: "python奇技淫巧"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>对字典元素的删除通常有两种办法<code>del</code>和<code>pop</code>, 推荐使用<code>del</code>,因为它更高效些。</p>
 
 <pre><code>mydict.pop(key)

@@ -6,11 +6,7 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><strong>注:本文摘自<a href="http://my.oschina.net/lijsf">青崖白鹿</a>,翻译的<a href="http://www.oschina.net/translate/15-practical-linux-find-command-examples">妈咪，我找到了! -- 15个实用的Linux find命令示例</a>, 感谢翻译的好文.</strong></p>
 
 <hr />

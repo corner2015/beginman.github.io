@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><code>sys._getframe([depth])</code></p>
 
 <p>从调用堆栈返回一个框架对象。如果可选整数深度给定，则返回该帧的对象。如果比所述调用栈更深，ValueError被挂起。默认

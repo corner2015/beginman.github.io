@@ -6,11 +6,6 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h2>前言</h2>
 
 <p>Python不大可能会成为一种函数式编程语言，但它支持许多有价值的函数式编程语言构建。</p>

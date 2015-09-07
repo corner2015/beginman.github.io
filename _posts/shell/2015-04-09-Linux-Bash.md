@@ -6,11 +6,6 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>未配置的终端不够友好，且如果进入到目录过多过长则会产生一长串的命令符，很烦人。通过一下几种配置后，终端立马高大上里。</p>
 
 <p>以下是我的终端显示：</p>

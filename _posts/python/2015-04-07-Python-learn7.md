@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>性能分析</h1>
 
 <p>在编写程序时往往没有考虑性格,只注重了实现,有时会导致运行慢,内存溢出等问题.在<a href="http://zh.wikipedia.org/zh-cn/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90">wiki</a> 关于性能分析这样描述:</p>

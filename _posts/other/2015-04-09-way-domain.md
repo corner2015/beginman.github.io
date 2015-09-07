@@ -6,11 +6,7 @@ category: "windows服务器"
 tags: [windows服务器]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>比如原来访问xxx.cn:888，而改成xxx.cn也可以访问。上网查找了一些资料，看到一种解决办法，正好服务器上也安装了apache和IIS两种软件。这台服务器上apache监听的是80端口，网站是放在IIS上面运行占用888端口。</p>
 
 <p>将apache作为IIS的代理</p>

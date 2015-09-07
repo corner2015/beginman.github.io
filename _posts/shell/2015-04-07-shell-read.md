@@ -6,11 +6,6 @@ category: "Shell"
 tags: [Shell]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>一.read语法简介</h1>
 
 <p><code>help read</code>之后会蹦出语法简介,如下:</p>

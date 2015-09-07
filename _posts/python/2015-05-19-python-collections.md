@@ -6,11 +6,6 @@ category: "python模块"
 tags: [python模块]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>python 计算一个元素重复的次数可用多种方式：</p>
 
 <pre><code># coding=utf-8

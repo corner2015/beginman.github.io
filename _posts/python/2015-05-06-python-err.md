@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>在Python中要注意可变对象的使用，比如：</p>
 
 <h2>1&#46;可变对象不能作为默认参数</h2>

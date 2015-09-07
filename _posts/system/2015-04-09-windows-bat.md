@@ -6,11 +6,6 @@ category: "windows服务器"
 tags: [windows服务器]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>windows 守护进程类软件很多，如果原理都一样，如果一个进程死掉后那么检测出来后就重启该进程，自己也可编写批处理脚本，如对YaoYanMemRelease.exe检测，如果该进程死掉就里面启动它并发送邮件给自己。</p>
 
 <pre><code>[shell]

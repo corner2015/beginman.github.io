@@ -6,11 +6,7 @@ category: "备份"
 tags: [备份]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>1&#46;备份的种类</h2>
 
 <ol>

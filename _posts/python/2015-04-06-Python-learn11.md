@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.闭包(Closure)概念</h1>
 
 <p><img src="http://images.cnblogs.com/cnblogs_com/BeginMan/480086/o_closure.jpg" alt="" /></p>

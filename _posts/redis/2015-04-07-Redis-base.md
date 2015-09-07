@@ -6,11 +6,7 @@ category: "redis"
 tags: [redis]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.Redis身份介绍</h1>
 
 <p>Redis是REmote DIctionary Server(Redis) 的缩写,属于NoSQL,利用key-value存储系统。redis的出现，很大程度补偿了memcached([mem'kæʃt])这类keyvalue存储的不足,同时提供了Python,Ruby,PHP等客户端.</p>

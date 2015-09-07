@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>推荐阅读</h2>
 
 <p>关于Python 元类的学习，这篇文章堪称一绝：</p>

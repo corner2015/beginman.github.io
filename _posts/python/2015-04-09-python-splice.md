@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.理解序列类型</h2>
 
 <p>序列类型是可迭代对象，如 lis = ["a", "b", "c", "d", "e"]它的形成如下：</p>

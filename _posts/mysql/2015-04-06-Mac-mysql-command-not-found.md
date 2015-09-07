@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>mac下配置mysql还是没linux下方便，对于配置这块，参考<a href="http://2484055.blog.51cto.com/2474055/1335382">MySQL for Mac 安装和基本操作(包含后期的环境变量设置)</a></p>
 
 <p>当重启后，突然在终端无法使用mysql，如<code>mysql -uroot -p</code> 则会提示‘"mysql: command not found"’的错误，这是因为没有写入mac的环境变量中，尝试这样执行：</p>

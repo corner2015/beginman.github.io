@@ -6,11 +6,7 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>linux发行版就是预装linux系统及一些常用的软件，分为商业版本比如Fedora（Red Hat)）、openSUSE（Novell）、Ubuntu（Canonical公司）和Mandriva Linux；和社区发行版它们由自由软件社区提供支持，如Debian和Gentoo；也有发行版既不是商业发行版也不是社区发行版，其中最有名的是Slackware。</p>
 
 <p>常见的发行版本：</p>

@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><code>inspect</code>模块：自省：</p>
 
 <p>关于自省，<a href="http://kb.cnblogs.com/page/87128/">参考这里</a><br />

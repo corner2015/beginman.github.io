@@ -6,11 +6,7 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>1.使用介绍</h2>
 
 <p>linux 防火墙 <code>iptables</code>服务 在CentOS中默认没有加入启动项中，这里我们需要：</p>

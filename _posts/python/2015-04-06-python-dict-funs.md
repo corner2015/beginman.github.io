@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>Python多个字典的合并是项目中常遇到的需求，接下来就总结一番。</p>
 
 <h2>方式1.items()</h2>

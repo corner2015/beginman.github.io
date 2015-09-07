@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>mysql copy表或表数据常用的语句整理汇总.</p>
 
 <p><img src="http://www.tutorialspoint.com/images/mysql-mini-logo.png" alt="" /></p>

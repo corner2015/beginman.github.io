@@ -6,11 +6,6 @@ category: "redis"
 tags: [redis]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>对于<a href="http://redis.io/commands/sadd"><code>sadd</code>命令</a>:>= 2.4: Accepts multiple member arguments. Redis versions before 2.4 are only able to add a single member per call.</p>
 
 <p>对于之前安装的2.2版本的redis必须要升级。</p>

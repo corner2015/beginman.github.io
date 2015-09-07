@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>不要重复造轮子,是python哲学之一.在django中会遇到一些需要全局变量的东西,如request信息,user信息,或者自己造的信息等,或许都需要在模板中进行渲染.对于这种需求,django提供了好几种方式,接下来一一讲解.</p>
 
 <h1>一.构造Context处理器</h1>

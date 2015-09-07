@@ -6,11 +6,6 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>一.raise</h1>
 
 <p><code>raise</code>更多的时候是coder自己需要触发的异常,比如说:</p>

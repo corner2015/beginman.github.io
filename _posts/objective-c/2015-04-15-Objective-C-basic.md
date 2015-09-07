@@ -6,11 +6,7 @@ category: "Objective-c"
 tags: [Objective-c]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.零碎总结</h1>
 
 <ul>

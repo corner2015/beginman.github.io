@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>python socket是对linux socket的一个接口封装，入门版本可参考这个<a href="http://www.oschina.net/question/12_76126">Python 的 Socket 编程教程</a>.</p>
 
 <p>然后给自己10分钟去入门吧.....</p>

@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.zip的魔法</h2>
 
 <p>关于<code>zip</code>可参考<a href="www.cnblogs.com/BeginMan/archive/2013/03/14/2959447.html">Python强大的zip</a>,这里有几个小技巧</p>

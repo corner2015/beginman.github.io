@@ -6,11 +6,6 @@ category: "linux服务器"
 tags: [linux服务器]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p><a href="http://www.joedog.org/siege-home/">siege</a>比较有名的web测压工具，在<a href="http://www.joedog.org/siege-manual/">siegu指南(manual)</a>中有较全的文档，siege模拟请求，<strong>对站点进行多用户的并发访问或重复访问</strong></p>
 
 <p><img src="http://coolshell.cn//wp-content/uploads/2010/07/get_more_web_traffic.jpg" alt="" /></p>

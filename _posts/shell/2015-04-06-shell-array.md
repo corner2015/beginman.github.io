@@ -6,11 +6,7 @@ category: "Shell"
 tags: [Shell]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>shell array.分为基础数组和关联数组,基础数组就是只能以整数为索引,关联数组则可以用字符串为索引.注意点,shell中数组元素可不是以<code>,</code>分割,而是<code></code>空格分割.</p>
 
 <!--more-->

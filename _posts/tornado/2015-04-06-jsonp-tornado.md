@@ -6,11 +6,6 @@ category: "web开发"
 tags: [web开发]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h2>一.JSONP理解</h2>
 
 <p>对于跨域请求，首先要清楚以下两点：</p>

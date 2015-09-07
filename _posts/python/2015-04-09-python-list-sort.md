@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>具体实例可参考：<a href="http://wangwei007.blog.51cto.com/68019/1100742"><strong>python的排序函数sort,sorted在列表排序和字典排序中的应用详解和举例</strong></a></p>
 
 <p>现在有这种情况，排序中排序。如大题号排序，然后大题对应的小题号也排序，如下：

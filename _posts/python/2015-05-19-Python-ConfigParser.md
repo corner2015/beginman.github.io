@@ -6,11 +6,7 @@ category: "python模块"
 tags: [python模块]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <blockquote>
   <p>配置文件的意义：不用改动代码（不用重新编译）就能改变应用程序的行为，使其更加灵活化，自由化。</p>
 </blockquote>

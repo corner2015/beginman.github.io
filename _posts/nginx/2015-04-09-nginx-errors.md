@@ -6,11 +6,7 @@ category: "Nginx"
 tags: [Nginx]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>nginx常见问题汇总：</p>
 
 <blockquote>

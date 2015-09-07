@@ -6,11 +6,7 @@ category: "jQuery"
 tags: [jQuery]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>jquery插件开发的两种方式：</p>
 
 <p>1.jQuery命名空间下的静态方法，<code>$.extend(dest,src1,src2,src3...);</code></p>

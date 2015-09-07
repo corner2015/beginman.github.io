@@ -6,11 +6,6 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>一.Python常量</h1>
 
 <p>常量指不能改变的量,在Python中没有提供常量的定义方法，因为Python是动态类型的，对于常量这种类型而言没有多大的意义去定义它，在实际项目中我们几乎很少用到。但Python能够提供方法去定义。</p>

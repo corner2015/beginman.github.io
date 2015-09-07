@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>information_schema数据库是mysql自带的，对数据库元数据的存储，<strong>元数据是关于数据的数据，如数据库名或表名，列的数据类型，或访问权限等</strong>。INFORMATION_SCHEMA中，有数个只读表。它们实际上是视图，而不是基本表，因此，你将无法看到与之相关的任何文件。</p>
 
 <p><em>information_schema数据库表说明:</em></p>

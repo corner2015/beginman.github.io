@@ -6,11 +6,7 @@ category: "Python视觉处理"
 tags: [Python视觉处理]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>最近在做即时聊天(IM)这块，对创建聊天小组要生成头像有需求，也就是根据创建聊天小组的时候，根据成员头像，生成一张聊天小组组图，相当于创建微信群头像，这不过这里将它圆角化而已。</p>
 
 <p>要开发这个功能，我们需要哪些知识呢？我列举如下：</p>

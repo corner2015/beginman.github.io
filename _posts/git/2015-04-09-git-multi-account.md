@@ -6,11 +6,7 @@ category: "git"
 tags: [git]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.原理问题</h2>
 
 <h3>1.git config</h3>

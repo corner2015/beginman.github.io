@@ -6,11 +6,7 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.关于Linux自启动过程</h2>
 
 <p>在读阮一峰<a href="http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html">《Linux 的启动流程》</a>这篇文章后，可总结如下：</p>

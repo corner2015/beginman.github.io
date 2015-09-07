@@ -6,11 +6,7 @@ category: "jQuery"
 tags: [jQuery]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>$.extend</h2>
 
 <p><code>$.extend(){...}</code>,在jQuery命名空间添加静态方法，可以通过$符号调用($.yourfunc()),而不需要DOM元素($('#dom').yourfunc()).</p>

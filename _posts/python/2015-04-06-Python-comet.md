@@ -6,11 +6,7 @@ category: "tornado"
 tags: [tornado]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.理论性知识</h2>
 
 <p>强烈推荐阅读：<a href="http://www.cnblogs.com/hoojo/p/longpolling_comet_jquery_iframe_ajax.html"><strong>Web 通信 之 长连接、长轮询（long polling）</strong></a></p>

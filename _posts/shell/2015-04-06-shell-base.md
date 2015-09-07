@@ -6,11 +6,7 @@ category: "Shell"
 tags: [Shell]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>在shell中,所有变量都是字符串形式,不能直接进行算术运算,<strong>可利用<code>let</code>, <code>(())</code>, <code>[]</code>执行基本的算术操作,<code>expr</code>,<code>bc</code>执行高级的算术运算</strong>.</p>
 
 <!--more-->

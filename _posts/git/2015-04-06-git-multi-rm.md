@@ -6,11 +6,7 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>最近遇到一个问题就是git忽略文件被跟踪了,想批量删除,使用<code>git rm --cached *.pyc</code>肯定不行的.于是就想到了<code>find</code>命令.find查找多个文件或者排除文件该如何操作呢?这里总结如下:</p>
 
 <h2>1.<code>-name</code>&amp;<code>-o</code>配合使用</h2>

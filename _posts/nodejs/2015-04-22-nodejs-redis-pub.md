@@ -6,11 +6,7 @@ category: "redis"
 tags: [redis]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>一旦客户端有订阅动作，它将发送如下事件：</p>
 
 <h3>"message" (channel, message)</h3>

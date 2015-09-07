@@ -6,11 +6,7 @@ category: "人生"
 tags: [人生]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <blockquote>
   <p>呵呵，搞服务器开发挺有压力的，稍微不注意的话服务器就可能宕机，如果牵涉公司主营业务的话，就感觉自己经历一场生死。对于我而已，即做后台开发，又做服务器运维，还兼任DBA,处理web前端。在小公司里身兼众职，难免会碰到很多问题，或者不注意就发生的故障。摆好心态，制定好应急方案，架设好自动化工具和安全监测是很有必要的。</p>
 </blockquote>

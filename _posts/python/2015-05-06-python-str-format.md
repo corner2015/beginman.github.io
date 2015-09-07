@@ -6,11 +6,6 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h2>方式1.%</h2>
 
 <p><strong>使用<code>%</code>格式符为真实值预留位置，呈现格式</strong>。格式符如下所示：</p>

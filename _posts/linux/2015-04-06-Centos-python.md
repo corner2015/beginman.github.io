@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>Centos 6.4 python 2.6 升级到 2.7的时候要注意yum的配置，否则yum就不能用。鉴于此，总结如下：</p>
 
 <pre><code>查看Python 版本:

@@ -6,11 +6,6 @@ category: "安全"
 tags: [安全]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h2>一.https与http区别</h2>
 
 <p><strong>HTTPS(Secure Hypertext Transfer Protocol)：安全超文本传输协议，基于HTTP,使用安全套接层(SSL)作为HTTP应用的子层，HTTPS使用443端口，SSL使 用40 位关键字作为RC4流加密算法，HTTPS和SSL支持使用X.509数字认证。</strong></p>

@@ -6,11 +6,6 @@ category: "python奇技淫巧"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>使字典对象具有<strong>句点操作符</strong>的特性，可以从<code>setattr()</code> or <code>__setattr__()</code>方面实现</p>
 
 <pre><code>d = {'a': 1, 'b': {'c': 2}, 'd': ["hi", {'foo': "bar"}]}

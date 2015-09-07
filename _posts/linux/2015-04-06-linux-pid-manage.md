@@ -6,11 +6,7 @@ category: "linux服务器"
 tags: [linux服务器]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>1.查看linux占用内存/CPU最多的进程</h2>
 
 <p>查使用内存最多的10个进程</p>

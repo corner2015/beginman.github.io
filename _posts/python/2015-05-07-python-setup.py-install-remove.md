@@ -6,11 +6,6 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>You need to remove all files manually, and also undo any other stuff that installation did manually.</p>
 
 <p>If you don't know the list of all files, you can reinstall it with the --record option, and take a look at the list this produces.</p>

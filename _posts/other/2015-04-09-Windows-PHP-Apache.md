@@ -6,11 +6,7 @@ category: "windows服务器"
 tags: [windows服务器]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一.安装</h2>
 
 <p><strong>千万不要一个个的去下载安装，直接下载个XAMPP套件安装就行</strong>, <a href="https://www.apachefriends.org/download_success.html">XAMPP</a></p>

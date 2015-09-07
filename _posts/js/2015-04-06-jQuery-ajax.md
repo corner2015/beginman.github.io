@@ -6,11 +6,7 @@ category: "jQuery"
 tags: [jQuery]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>jQuery.ajax(url, [data], [callback])</h2>
 
 <p><strong>载入远程HTML文件代码并插入DOM中，注意跨域情况</strong></p>

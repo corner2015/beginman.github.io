@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一、个人需求</h2>
 
 <p>由于一直用Linux系统，对于词典的支持特别不好，对于我这英语渣渣的人来说，当看英文文档就一直卡壳，之前用惯了有道词典，感觉很不错，虽然有网页版的但是对于全站英文的网页来说并不支持。索性自己实现一个，基于Python编写的小工具实现有道词典，同时还可以将不认识的生词写入生词本中（xml格式），然后定期批量导入有道词典、沪江英语、金山词霸等。需要申请有道api</p>

@@ -6,11 +6,6 @@ category: "tornado"
 tags: [tornado]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <blockquote>
   <p>通常来说， Tornado中，在 RequestHandler 类里（还有其他位置）方法都不是线程安全的。特别是如： write(), finish(), 和 flush() 这几个方法只能在主线程中调用。如果你使用了多线程模式运行，就必须在请求结束前使用 IOLoop.add_callback 将控制权交给主线程。</p>
 </blockquote>

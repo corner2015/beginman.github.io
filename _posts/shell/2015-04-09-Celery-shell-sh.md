@@ -6,11 +6,6 @@ category: "Celery"
 tags: [Celery]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>celery官网貌似没有提供给服务脚本，参照Redis的启动脚本和celery命令，可自行写一个脚本。首先celery配置如下：</p>
 
 <pre><code># coding=utf-8

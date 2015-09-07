@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>一．Join语法概述</h2>
 
 <p>join 用于多表中字段之间的联系，语法如下：</p>

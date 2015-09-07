@@ -6,11 +6,7 @@ category: "python奇技淫巧"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><code>operator</code>模块提供<code>itemgetter</code>函数用于获取对象的哪些维的数据或者哪些key对应的数据,参数就是索引号或key值.可以设置多个索引号或key值。</p>
 
 <p>文档描述如下：</p>

@@ -6,11 +6,7 @@ category: "Nginx"
 tags: [Nginx]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>建议从<a href="http://oilbeater.com/nginx/2014/12/29/nginx-conf-from-zero.html"><strong>nginx 配置从零开始</strong></a>开始入门，</p>
 
 <p>大致了解Nginx后，直接从配置文件入手：</p>

@@ -6,11 +6,6 @@ category: "linux基础"
 tags: [linux基础]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>Bash Shell 快捷键</h1>
 
 <p>可以查看这里<a href="https://linuxtoy.org/archives/bash-shortcuts.html"><strong>让你提升命令行效率的 Bash 快捷键</strong></a>,但是有一点的上，复制粘贴快捷上面没有，这里补充下：</p>

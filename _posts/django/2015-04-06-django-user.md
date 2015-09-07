@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.扩展方式1:非profile方式扩展Django User Model</h1>
 
 <p>这个通过方式动态的修改User Model类来实现扩展,全文见:<a href="http://onlypython.group.iteye.com/group/wiki/1519-expansion-django-user-model-by-non-profile-way"><strong>非profile方式扩展Django User Model</strong></a>, <strong>这段代码和实现的理念非常值得研究.</strong></p>

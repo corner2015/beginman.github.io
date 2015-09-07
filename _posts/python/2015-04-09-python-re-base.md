@@ -6,11 +6,7 @@ category: "python技巧"
 tags: [python技巧]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>本次对python正则进行系统学习，当然不限于一门编程语言，总体来说是对<code>正则</code>的学习与总结，这里分以下几个步骤：</p>
 
 <h1>一.计划学习</h1>

@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>总结如下：
 1、首先这份文档看三两遍是不行的，很多东西再看一遍就通顺了。
 2、send_mail()、send_mass_mail()都是对EmailMessage类使用方式的一个轻度封装，所以要关注底层的EmailMessage。

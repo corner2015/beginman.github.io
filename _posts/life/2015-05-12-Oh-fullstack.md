@@ -6,11 +6,7 @@ category: "人生"
 tags: [人生]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>全栈工程师(full-stack enginner)近几年比较热的话题，<strong>个人目标就是：望全栈之景，追架构之路.</strong>,今天就总结下豆瓣专栏<strong><a href="http://read.douban.com/people/1814372/">余果-谈谈全栈工程师</a></strong>。</p>
 
 <!--more-->

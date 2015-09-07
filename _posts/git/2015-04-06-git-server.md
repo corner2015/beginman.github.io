@@ -6,11 +6,7 @@ category: "git"
 tags: [git]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>1.生成 SSH 公钥</h2>
 
 <p>首先在自己的电脑上生成SSH公钥，只需要一个命令就可以了。</p>

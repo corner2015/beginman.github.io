@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>在<a href="http://blog.beginman.cn/blog/133/"> 深入理解yield(二)：yield与协程</a> 和<a href="http://blog.beginman.cn/blog/132/">深入理解yield(一)：yield原理</a>已经对yield原理及在python中的运用了解了很多，那么接下来就要结合Tornado,进行python异步的分析。</p>
 
 <h2>一.异步的实现</h2>

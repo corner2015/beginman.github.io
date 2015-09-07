@@ -6,11 +6,7 @@ category: "git"
 tags: [git]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>为了更加方便高效的使用git,写了个脚本．</p>
 
 <pre><code>#!/bin/bash

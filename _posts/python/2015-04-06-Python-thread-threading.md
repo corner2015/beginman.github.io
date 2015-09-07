@@ -6,11 +6,7 @@ category: "多线程"
 tags: [多线程]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>thread模块</h2>
 
 <p>提供的主要函数如下：</p>

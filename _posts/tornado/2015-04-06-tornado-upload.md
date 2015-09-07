@@ -6,11 +6,6 @@ category: "上传"
 tags: [上传]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <p>## 一.http上传原理
 参考：<a href="http://blog.beginman.cn/blog/146/">html&amp;html5之form</a>, 确保表单<code>enctype=multipart/form-data</code>,multipart/form-data 是新增的编码类型，以提高二进制文件的传输效率.</p>
 

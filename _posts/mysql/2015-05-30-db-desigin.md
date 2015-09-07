@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>这两天看慕课网<a href="http://www.imooc.com/learn/117">《数据库设计那些事》</a>教学视频，总结了几点，算是观后感吧。</p>
 
 <p>数据库设计步骤：</p>

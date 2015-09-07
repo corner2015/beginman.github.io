@@ -6,11 +6,7 @@ category: "Mysql"
 tags: [Mysql]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p><img src="http://dev.mysql.com/common/logos/logo-mysql-110x57.png" alt="" /></p>
 
 <p>mysql进行group by 并count操作时当没有数据则不显示,这里需要标明如果没有数据则标记为空,如下需求:</p>

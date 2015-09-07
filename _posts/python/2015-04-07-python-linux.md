@@ -6,11 +6,6 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
 <h1>一.Python执行*nix命令</h1>
 
 <p>有好几种方式,如:<code>os.system()</code>和'subprocess','commands模块',<code>os.system()</code>将会调用标准的C函数<code>system()</code>返回进程或命令的退出状态(一般用0表示)和执行的信息.用于执行简单的命令,对于<code>subprocess</code>而言提供的功能更加强悍.</p>

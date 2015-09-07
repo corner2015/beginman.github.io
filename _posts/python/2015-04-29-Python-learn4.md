@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>如下整理常用的python装饰器应用场景，更多的场景如tornado,flask,django中都有具体的表现，读源码确实能够对python有很大的提升。</p>
 
 <ol>

@@ -6,11 +6,7 @@ category: "redis"
 tags: [redis]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h2>Redis消息队列的实现</h2>
 
 <h3>队列(queue)</h3>

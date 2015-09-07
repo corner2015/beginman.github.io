@@ -6,11 +6,7 @@ category: "tornado"
 tags: [tornado]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>在使用tornado时，我们用到<code>option</code>模块来定义或解析命令，如下：</p>
 
 <pre><code>from tornado.options import define, options, parse_command_line

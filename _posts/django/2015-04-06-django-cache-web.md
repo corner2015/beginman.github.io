@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.web缓存概念</h1>
 
 <p>web缓存就是将静态资源(page,css,js,datas)等存储在特定区域作为<strong>副本</strong>,当相同请求时通过后台程序策略(如是否需要访问副本,是否到来过期时间等)来访问.</p>

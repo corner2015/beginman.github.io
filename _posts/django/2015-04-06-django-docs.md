@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <blockquote>
   <p>"Care about your craft"
   "注重时效的程序员,不要完成工作,还要完成的漂亮!"

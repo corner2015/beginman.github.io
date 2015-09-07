@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>uuid也叫GUID,(UUID —— Universally Unique IDentifier；GUID —— Globally Unique IDentifier) 全局唯一标识符，128位个长二进制整数， 具体参考：<a href="http://zh.wikipedia.org/wiki/%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86%E7%AC%A6">GUID</a></p>
 
 <p><a href="https://docs.python.org/2/library/uuid.html">document</a></p>

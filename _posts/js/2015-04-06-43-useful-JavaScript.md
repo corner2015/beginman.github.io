@@ -6,11 +6,7 @@ category: "javascript"
 tags: [javascript]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>长夜漫漫，实在孤寂，浏览网页发现如此美文，遂整理分享之：</p>
 
 <p><img src="http://www.admin10000.com/UploadFiles/Document/201312/27/20131227113356289215.JPG" alt="" /></p>

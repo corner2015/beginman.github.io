@@ -6,11 +6,7 @@ category: "django"
 tags: [django]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>一.设置settings.py数据库实例</h1>
 
 <p>django需要一个默认的数据库实例,如settings.py中的<code>DATABASES</code>字典中的<code>default</code>字典.如果不需要则也可以不指定.如:</p>

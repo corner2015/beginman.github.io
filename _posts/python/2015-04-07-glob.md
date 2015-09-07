@@ -6,11 +6,7 @@ category: "python模块"
 tags: [python模块]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <h1>glob模块</h1>
 
 <p>glob是Python标准库之一，主要作用就是依据Unix Shell规则找出对应位置与之匹配的文件名。主要方法就是<code>glob.glob(pattern)</code>。</p>

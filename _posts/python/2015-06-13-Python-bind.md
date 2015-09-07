@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <blockquote>
   <p>当方法由实例带动，方法才被认为是绑定到那个实例，就是<code>binding</code>；没有实例时方法就是未绑定(<code>Unbound</code>)的.</p>
 </blockquote>

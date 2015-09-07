@@ -6,11 +6,7 @@ category: "备份"
 tags: [备份]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>如果不能完成某件事就要找出原因，否则就不要轻易的放弃，对于这次服务器坏掉对其mysql data目录数据恢复就是一教训。</p>
 
 <p>这里总结一下作为警戒：</p>

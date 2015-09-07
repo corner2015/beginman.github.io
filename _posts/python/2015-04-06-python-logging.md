@@ -6,11 +6,7 @@ category: "Python"
 tags: [Python]
 ---
 {% include JB/setup %}
-<ul>
-    <li>作者：<a href="http://weibo.com/beginman" target="blank">BeginMan</a></li>
-    <li>本文地址：http://beginman.github.io</li>
-    <li>转载请注明出处</li>
-</ul>
+
 <p>源码位置:<a href="https://hg.python.org/cpython/file/2.7/Lib/logging/__init__.py">Lib/logging/<strong>init</strong>.py</a>，在2.3版本中才出现。</p>
 
 <p>这个模块定义函数和类对app和库执行一个灵活的日志系统事件(implement a flexible event logging system).</p>
