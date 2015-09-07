@@ -1,14 +1,6 @@
 html, body {
     background-color: #EEEEEE;
 }
-body {
-  font-family: 'Inconsolata', serif;
-  font-size: 16px;
-}
-pre{
-  font-size: 18px;
-  font-family: 'Inconsolata', serif;
-}
 
 .fa-hover {
     float: left;
@@ -45,6 +37,7 @@ pre{
 
 .navbar-inverse .brand {
     color: #FFFFFF;
+	font-size:30px;
 }
 .page-header h1 small{
   margin-left: 25px;
