@@ -53,14 +53,14 @@
                 };
              
         })(jQuery);
-        
+
             $(function(){
                 $("pre").addClass("prettyprint");
                 prettyPrint();
 
                 // hide #back-top first
                 $("#back-top").hide();
-                $('.content').imgAutoSize();
+                $('.content').imgAutoSize(30);
                 // fade in #back-top
                 $(function () {
                     $(window).scroll(function () {
