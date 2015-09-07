@@ -20,13 +20,14 @@ pre.prettyprint, code.prettyprint {
         -o-border-radius: 3px;
         -ms-border-radius: 3px;
         -khtml-border-radius: 3px;
-        border-radius: 3px;
+        border-radius: 12px;
 }
 
 pre.prettyprint {
-        width: 95%;
+        width: 99%;
         padding: 1em;
         white-space: pre-wrap;
+        font-size: 16px;
 }
 
 

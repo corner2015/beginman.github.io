@@ -5,7 +5,9 @@
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 html {
-  font-family: sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
@@ -1187,6 +1189,7 @@ h6,
   font-family: inherit;
   font-weight: 500;
   line-height: 1.1;
+  padding-bottom: 0.5em;
   color: inherit;
 }
 h1 small,
@@ -1225,6 +1228,9 @@ h3,
 .h3 {
   margin-top: 20px;
   margin-bottom: 10px;
+  padding-bottom: 0.5em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee
 }
 h1 small,
 .h1 small,
@@ -1417,6 +1423,7 @@ ul,
 ol {
   margin-top: 0;
   margin-bottom: 10px;
+  padding-left: 2em;
 }
 ul ul,
 ol ul,
@@ -1478,8 +1485,8 @@ abbr[data-original-title] {
 blockquote {
   padding: 10px 20px;
   margin: 0 0 20px;
-  font-size: 17.5px;
   border-left: 5px solid #eee;
+  color: #777
 }
 blockquote p:last-child,
 blockquote ul:last-child,
