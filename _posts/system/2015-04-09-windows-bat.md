@@ -2,7 +2,7 @@
 layout: post
 title: "windows进程管理及脚本编写"
 description: "windows进程管理及脚本编写"
-category: "windows服务器"
+category: "windows"
 tags: [windows服务器]
 ---
 {% include JB/setup %}

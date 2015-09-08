@@ -2,7 +2,7 @@
 layout: post
 title: "理解python的元类"
 description: "理解python的元类"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

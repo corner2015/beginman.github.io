@@ -2,7 +2,7 @@
 layout: post
 title: "LAMP+phpAdmin 安装配置"
 description: "LAMP+phpAdmin 安装配置"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

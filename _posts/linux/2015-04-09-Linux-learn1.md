@@ -2,7 +2,7 @@
 layout: post
 title: "Linux命令流程，重定向与管道"
 description: "Linux命令流程，重定向与管道"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "域名带端口的解决办法"
 description: "域名带端口的解决办法"
-category: "windows服务器"
+category: "windows"
 tags: [windows服务器]
 ---
 {% include JB/setup %}

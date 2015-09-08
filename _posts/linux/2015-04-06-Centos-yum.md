@@ -2,7 +2,7 @@
 layout: post
 title: "Centos yum详解"
 description: "Centos yum详解"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

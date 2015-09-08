@@ -2,7 +2,7 @@
 layout: post
 title: "Supervisor学习"
 description: "Supervisor学习"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

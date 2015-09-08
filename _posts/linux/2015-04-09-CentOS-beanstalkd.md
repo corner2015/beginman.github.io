@@ -2,7 +2,7 @@
 layout: post
 title: "CentOS安装配置beanstalkd"
 description: "CentOS安装配置beanstalkd"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

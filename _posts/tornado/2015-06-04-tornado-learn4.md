@@ -2,8 +2,8 @@
 layout: post
 title: "tornado分析(1).基础小结"
 description: "tornado分析(1).基础小结"
-category: "未分类"
-tags: [未分类]
+category: "tornado"
+tags: [tornado]
 ---
 {% include JB/setup %}
 <p>主要模块：</p>

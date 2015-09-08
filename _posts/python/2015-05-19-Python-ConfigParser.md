@@ -2,7 +2,7 @@
 layout: post
 title: "Python ConfigParser模块处理配置文件"
 description: "Python ConfigParser模块处理配置文件"
-category: "python模块"
+category: "python"
 tags: [python模块]
 ---
 {% include JB/setup %}

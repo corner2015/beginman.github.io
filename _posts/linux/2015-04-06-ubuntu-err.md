@@ -2,7 +2,7 @@
 layout: post
 title: "ubuntu 常见错误"
 description: "ubuntu 常见错误"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

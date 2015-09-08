@@ -2,7 +2,7 @@
 layout: post
 title: "这几年的博客"
 description: "这几年的博客"
-category: "人生"
+category: "life"
 tags: [人生]
 ---
 {% include JB/setup %}

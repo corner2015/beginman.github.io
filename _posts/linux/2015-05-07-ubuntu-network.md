@@ -2,7 +2,7 @@
 layout: post
 title: "ubuntu网络配置"
 description: "ubuntu网络配置"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

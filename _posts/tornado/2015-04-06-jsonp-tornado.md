@@ -2,7 +2,7 @@
 layout: post
 title: "jsonp原理及tornado的应用"
 description: "jsonp原理及tornado的应用"
-category: "web开发"
+category: "web"
 tags: [web开发]
 ---
 {% include JB/setup %}

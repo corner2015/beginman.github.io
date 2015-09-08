@@ -7,7 +7,6 @@ group: navigation
 ---
 {% include JB/setup %}
 
-**[:-D 点击查看 个人简历 **][1]**
 
 ## 资料
 
@@ -43,7 +42,7 @@ group: navigation
     
     printf("C(半熟)")
     
-    #todo: 强化c/c++, 学习object-c,学习c#
+    #todo: 强化c/c++, 学习object-c
     
 
 **版本控制：**

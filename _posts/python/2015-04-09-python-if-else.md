@@ -2,7 +2,7 @@
 layout: post
 title: "python if else 多种写法"
 description: "python if else 多种写法"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

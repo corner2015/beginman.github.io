@@ -2,7 +2,7 @@
 layout: post
 title: "Oh,全栈工程师"
 description: "Oh,全栈工程师"
-category: "人生"
+category: "life"
 tags: [人生]
 ---
 {% include JB/setup %}

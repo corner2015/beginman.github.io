@@ -2,7 +2,7 @@
 layout: post
 title: "glob 模块"
 description: "glob 模块"
-category: "python模块"
+category: "python"
 tags: [python模块]
 ---
 {% include JB/setup %}

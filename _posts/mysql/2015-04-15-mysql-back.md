@@ -2,7 +2,7 @@
 layout: post
 title: "mysql备份策略"
 description: "mysql备份策略"
-category: "备份"
+category: "mysql"
 tags: [备份]
 ---
 {% include JB/setup %}

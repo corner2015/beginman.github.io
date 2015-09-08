@@ -2,7 +2,7 @@
 layout: post
 title: "python list 排序"
 description: "python list 排序"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

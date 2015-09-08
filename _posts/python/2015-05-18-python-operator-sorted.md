@@ -2,7 +2,7 @@
 layout: post
 title: "python operator.itemgetter函数与sorted的妙用"
 description: "python operator.itemgetter函数与sorted的妙用"
-category: "python奇技淫巧"
+category: "python"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}

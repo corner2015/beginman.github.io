@@ -2,7 +2,7 @@
 layout: post
 title: "Python技巧（1）：合并字典对象"
 description: "Python技巧（1）：合并字典对象"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

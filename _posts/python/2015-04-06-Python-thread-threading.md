@@ -2,7 +2,7 @@
 layout: post
 title: "Python多线程编程(2):thread&amp;threading模块"
 description: "Python多线程编程(2):thread&amp;threading模块"
-category: "多线程"
+category: "thread"
 tags: [多线程]
 ---
 {% include JB/setup %}

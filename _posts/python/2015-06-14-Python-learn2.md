@@ -2,7 +2,7 @@
 layout: post
 title: "Python 下划线特征体现与私有概念"
 description: "Python 下划线特征体现与私有概念"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

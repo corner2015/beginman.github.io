@@ -2,7 +2,7 @@
 layout: post
 title: "linux 命令后台运行方式"
 description: "linux 命令后台运行方式"
-category: "运维"
+category: "operation"
 tags: [运维]
 ---
 {% include JB/setup %}

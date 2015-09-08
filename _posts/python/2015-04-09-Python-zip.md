@@ -2,7 +2,7 @@
 layout: post
 title: "Python 深入zip与列表推导"
 description: "Python 深入zip与列表推导"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

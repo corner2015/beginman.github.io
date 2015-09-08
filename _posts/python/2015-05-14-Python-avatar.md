@@ -2,7 +2,7 @@
 layout: post
 title: "Python生成聊天群头像"
 description: "Python生成聊天群头像"
-category: "Python视觉处理"
+category: "Python"
 tags: [Python视觉处理]
 ---
 {% include JB/setup %}

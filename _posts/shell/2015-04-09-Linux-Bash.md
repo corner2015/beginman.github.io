@@ -2,7 +2,7 @@
 layout: post
 title: "Linux Bash 高亮美化"
 description: "Linux Bash 高亮美化"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

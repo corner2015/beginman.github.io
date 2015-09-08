@@ -2,7 +2,7 @@
 layout: post
 title: "python dict to object"
 description: "python dict to object"
-category: "python奇技淫巧"
+category: "python"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python assert vs raise"
 description: "Python assert vs raise"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

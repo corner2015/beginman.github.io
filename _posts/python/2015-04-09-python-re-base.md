@@ -2,7 +2,7 @@
 layout: post
 title: "python正则表达式（1）：正则基础"
 description: "python正则表达式（1）：正则基础"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

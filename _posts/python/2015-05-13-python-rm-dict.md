@@ -2,7 +2,7 @@
 layout: post
 title: "移除python字典元素的几种方式"
 description: "移除python字典元素的几种方式"
-category: "python奇技淫巧"
+category: "python"
 tags: [python奇技淫巧]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python字符处理方式"
 description: "Python字符处理方式"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

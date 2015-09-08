@@ -2,7 +2,7 @@
 layout: post
 title: "13个实用的Linux find命令示例"
 description: "13个实用的Linux find命令示例"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

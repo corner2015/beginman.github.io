@@ -2,7 +2,7 @@
 layout: post
 title: "linux发行版认知"
 description: "linux发行版认知"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

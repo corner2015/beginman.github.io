@@ -2,7 +2,7 @@
 layout: post
 title: "tornado文件上传"
 description: "tornado文件上传"
-category: "上传"
+category: "tornado"
 tags: [上传]
 ---
 {% include JB/setup %}

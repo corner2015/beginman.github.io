@@ -2,7 +2,7 @@
 layout: post
 title: "Python 函数式编程"
 description: "Python 函数式编程"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

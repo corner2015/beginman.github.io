@@ -2,7 +2,7 @@
 layout: post
 title: "记一次处理服务器异常之旅"
 description: "记一次处理服务器异常之旅"
-category: "人生"
+category: "life"
 tags: [人生]
 ---
 {% include JB/setup %}

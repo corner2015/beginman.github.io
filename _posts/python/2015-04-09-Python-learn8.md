@@ -2,7 +2,7 @@
 layout: post
 title: "Python生成器小结"
 description: "Python生成器小结"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

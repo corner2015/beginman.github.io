@@ -2,7 +2,7 @@
 layout: post
 title: "siege webSite 测压工具"
 description: "siege webSite 测压工具"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

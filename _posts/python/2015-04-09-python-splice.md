@@ -2,7 +2,7 @@
 layout: post
 title: "理解python序列类型的切片"
 description: "理解python序列类型的切片"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

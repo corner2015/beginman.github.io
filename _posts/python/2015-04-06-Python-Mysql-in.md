@@ -2,7 +2,7 @@
 layout: post
 title: "Python Mysql in 操作处理"
 description: "Python Mysql in 操作处理"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "python setup.py install 卸载"
 description: "python setup.py install 卸载"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "CentOS服务器开发初步"
 description: "CentOS服务器开发初步"
-category: "运维"
+category: "operation"
 tags: [运维]
 ---
 {% include JB/setup %}

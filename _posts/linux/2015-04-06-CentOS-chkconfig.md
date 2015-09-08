@@ -2,7 +2,7 @@
 layout: post
 title: "CentOS 开机启动设置与chkconfig命令学习"
 description: "CentOS 开机启动设置与chkconfig命令学习"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

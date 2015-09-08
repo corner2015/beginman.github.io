@@ -2,7 +2,7 @@
 layout: post
 title: "tornado异步方案"
 description: "tornado异步方案"
-category: "异步"
+category: "tornado"
 tags: [异步]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "mysql data目录恢复"
 description: "mysql data目录恢复"
-category: "备份"
+category: "mysql"
 tags: [备份]
 ---
 {% include JB/setup %}

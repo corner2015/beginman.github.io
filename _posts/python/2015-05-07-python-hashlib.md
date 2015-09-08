@@ -2,7 +2,7 @@
 layout: post
 title: "python hashlib模块"
 description: "python hashlib模块"
-category: "python模块"
+category: "python"
 tags: [python模块]
 ---
 {% include JB/setup %}

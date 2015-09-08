@@ -2,7 +2,7 @@
 layout: post
 title: "HTTPS设置与Tornado应用"
 description: "HTTPS设置与Tornado应用"
-category: "安全"
+category: "security"
 tags: [安全]
 ---
 {% include JB/setup %}

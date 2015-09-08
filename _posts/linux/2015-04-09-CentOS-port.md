@@ -2,7 +2,7 @@
 layout: post
 title: "CentOS 端口操作"
 description: "CentOS 端口操作"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

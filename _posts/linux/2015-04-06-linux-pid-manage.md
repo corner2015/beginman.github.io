@@ -2,7 +2,7 @@
 layout: post
 title: "linux服务进程管理与分析"
 description: "linux服务进程管理与分析"
-category: "linux服务器"
+category: "linux"
 tags: [linux服务器]
 ---
 {% include JB/setup %}

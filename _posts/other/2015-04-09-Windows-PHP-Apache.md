@@ -2,7 +2,7 @@
 layout: post
 title: "Windows下PHP，Apache搭建"
 description: "Windows下PHP，Apache搭建"
-category: "windows服务器"
+category: "windows"
 tags: [windows服务器]
 ---
 {% include JB/setup %}

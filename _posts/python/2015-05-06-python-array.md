@@ -2,7 +2,7 @@
 layout: post
 title: "python array模块"
 description: "python array模块"
-category: "python模块"
+category: "python"
 tags: [python模块]
 ---
 {% include JB/setup %}

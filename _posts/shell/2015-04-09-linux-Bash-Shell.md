@@ -2,7 +2,7 @@
 layout: post
 title: "linux Bash Shell 快捷键使用"
 description: "linux Bash Shell 快捷键使用"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}

@@ -2,7 +2,7 @@
 layout: post
 title: "Python OOP 常见疑难点汇总"
 description: "Python OOP 常见疑难点汇总"
-category: "python技巧"
+category: "python"
 tags: [python技巧]
 ---
 {% include JB/setup %}

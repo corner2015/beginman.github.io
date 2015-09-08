@@ -2,7 +2,7 @@
 layout: post
 title: "linux export命令，设置环境变量"
 description: "linux export命令，设置环境变量"
-category: "linux基础"
+category: "linux"
 tags: [linux基础]
 ---
 {% include JB/setup %}
