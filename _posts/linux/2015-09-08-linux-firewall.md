@@ -49,6 +49,7 @@ raw, 用于决定数据包是否被跟踪机制处理
 - 规则链之间的优先顺序:入站数据流向>转发数据流向>出站数据流向
 
 # 三.管理和配置Iptables规则
+
 ## 1.基本语法
 
 	iptables [-t 表名] 命令选项 [链名] [条件匹配] [-] 目标动作或跳转
@@ -351,6 +352,7 @@ ICMP类型匹配：用于检查ICMP数据包
 - 用户自定义链：将数据传给用户自定义的链进行处理
 		
 自定义一个链MYLAN 转发至192.168.1.0/24 网段数据包交给该链中的规则处理。
+
 	[root@s2 ~]# iptables -t filter -N MYLAN
 	[root@s2 ~]# iptables -A FORWARD -s 192.168.1.0/24 -j MYLAN
 	[root@s2 ~]# iptables -A FORWARD -d 192.168.1.0/24 -j MYLAN
