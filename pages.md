@@ -31,6 +31,11 @@ group: navigation
 - [socket模块](http://beginman.cn/python/2015/04/06/python-socket)
 - [inspect模块](http://beginman.cn/python/2015/04/06/python-inspect)
 - [thread&threading模块](http://beginman.cn/thread/2015/04/06/Python-thread-threading)
-
+- [peapq模块](https://github.com/qiwsir/algorithm/blob/master/heapq.md)
 待续...
+
+# Linux命令精选
+- [lsof命令](http://www.cnblogs.com/peida/archive/2013/02/26/2932972.html)
+- [netstat命令](http://www.cnblogs.com/ggjucheng/archive/2012/01/08/2316661.html)
+
 
