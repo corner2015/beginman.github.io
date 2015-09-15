@@ -10,7 +10,7 @@ group: navigation
 
 ## 资料
 
-![](https://avatars3.githubusercontent.com/u/4414032?v=3&s=460)
+![](http://beginman.qiniudn.com/qc.jpg)
 
 *   网名: Beginman
 *   真实姓名: QMVNAW5TYW4GPIDMLRNMNIS=
@@ -84,8 +84,5 @@ group: navigation
 
 ![](http://beginman.qiniudn.com/my___self2.jpeg)
 
-![][3]
 
- [1]: http://www.beginman.cn/wp-content/uploads/2015/06/%E4%B8%AA%E4%BA%BA%E7%AE%80%E5%8E%86.pdf
  [2]: http://resume.github.io/?BeginMan
- [3]: http://beginman.qiniudn.com/qc.jpg
