@@ -36,13 +36,13 @@ group: navigation
 
 **语言：**
 
-    print "Python(熟练,主力)"
+    print "Python(熟练,主力生产)"
     
-    console.log("nodeJs(辅助，写过webChat,Webservice用于生产环境)")
+    console.log("nodejs(辅助，写过webChat,Webservice用于生产环境)")
     
-    document.write("<div>javascript（半熟）</div>")
+    document.write("<div>javascript, 一直是自己写web....</div>")
     
-    printf("C(半熟)")
+    puts("C, 研究Unix和各种源码， 写一些算法和小程序.")
     
     #todo: 强化c/c++, 学习object-c
     
@@ -56,7 +56,7 @@ group: navigation
 **常用工具/框架：**
 
 1.  Python(django,tornado,flask)
-2.  nodeJs(express,socket.io)
+2.  nodejs(express,socket.io)
 3.  C#(ASP.NET)
 4.  后端开发工具(Celery,RabbitMQ,Beanstalkd,flower,等)
 5.  服务器(vim, Nginx还有其他小工具)
