@@ -10,6 +10,8 @@ group: navigation
 
 ## 资料
 
+![](https://avatars3.githubusercontent.com/u/4414032?v=3&s=460)
+
 *   网名: Beginman
 *   真实姓名: QMVNAW5TYW4GPIDMLRNMNIS=
 *   Tags:90后 & Pythoner & 文艺青年 & 果粉 & 后台开发 & 运维 & Linux忠实用户
@@ -77,6 +79,10 @@ group: navigation
 *   email: xinxinyu2011#163.com
 
 **做好一件事是需要付出巨大代价的，艰辛的汗水是应该在这年青脊梁流淌的……**
+
+![](http://beginman.qiniudn.com/my___self1.jpeg)
+
+![](http://beginman.qiniudn.com/my___self2.jpeg)
 
 ![][3]
 
