@@ -11,7 +11,7 @@ tags: [进阶]
 
 ## 总体计划
 
-- [完成] 熟悉HTTP 协议
+- ~~[完成] 熟悉HTTP 协议~~
 - [ ] 学习TCP/IP 协议
 - [ ] 熟悉web 安全
 - [ ] Gevent异步框架学习
@@ -23,15 +23,15 @@ tags: [进阶]
 - [ ] 熟悉flask,阅读flask源码
 - [ ] 熟悉Celery
 - [ ] 熟悉rabbitMQ
-- [完成] mongodb学习
+- ~~[完成] mongodb学习~~
 - [ ] nodejs学习
 
 ## Python进阶
 
 - [ ] python 函数式编程
-- [完成] Python oop
-- [完成] python装饰器
-- [完成] python生成器
+- ~~[完成] Python oop~~
+- ~~[完成] python装饰器~~
+- ~~[完成] python生成器~~
 - [ ] python高级语法如(itertools)
 - [ ] python设计模式
 - [ ] python多线程
@@ -40,7 +40,7 @@ tags: [进阶]
 ## 技术书籍读书计划
 
 - [ ]《深入理解nginx》
-- ~~删除线~~ [完成]《head first C》
+- ~~[完成]《head first C》~~
 - [20%]《鸟哥linux私房菜-基础篇》
 - [40%]《深入浅出Node.js》
 - [90%]《改善python90个建议》
@@ -51,17 +51,17 @@ tags: [进阶]
 - [ ]《python标准库》
 - [ ]《深入浅出mysql》
 - [ ]《python网络编程》
-- [完成]《MacTalk.人生元编程》
+- ~~[完成]《MacTalk.人生元编程》~~
 - [ ]《构建高性能的Web站点》
 - [ ]《白帽子讲Web安全》
 - [ ]《图解TCP/IP》
 
 更新于2015-09-07.
 
-~~删除线~~
+更新于2015-09-22.完成如下：
 
-~Call Mom today.~
+- 看完并总结《head first C》
 
-kramdown <<< '1. <s>Call Mom today.</s>'
+
 
 **坚持就是胜利，必须加油**
