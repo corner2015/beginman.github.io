@@ -62,4 +62,6 @@ tags: [进阶]
 
 ~Call Mom today.~
 
+kramdown <<< '1. <s>Call Mom today.</s>'
+
 **坚持就是胜利，必须加油**
