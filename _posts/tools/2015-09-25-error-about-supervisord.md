@@ -9,8 +9,10 @@ tags: [linux服务器]
 
 在服务器中删除东西，删的太得劲了，突然把后端服务给删掉了，幸好托管在github私有仓库，本想着clone一份到服务器就ok的。虽知道服务一直不启动。看了下supervisord错误日志，发现如下：
 
-  cat /tmp/supervisord.log
-  event_worker entered FATAL state, too many start retries too quickly
+
+    cat /tmp/supervisord.log
+    event_worker entered FATAL state, too many start retries too quickly
+
 
 意思就是：“进入了致命状态(FATAL), 一直重启重启重启...”.
 
@@ -28,4 +30,10 @@ tags: [linux服务器]
 这样应该就ok了。
 
 一些supervisord相关的知识可参考[**Supervisor学习**](http://beginman.cn/linux/2015/04/06/Supervisor/)
+
+谨记：**不要随随便便的在服务器上乱删乱搞!**
+
+
+
+
 
