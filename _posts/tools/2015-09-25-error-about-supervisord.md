@@ -32,8 +32,3 @@ tags: [linux服务器]
 一些supervisord相关的知识可参考[**Supervisor学习**](http://beginman.cn/linux/2015/04/06/Supervisor/)
 
 谨记：**不要随随便便的在服务器上乱删乱搞!**
-
-
-
-
-
