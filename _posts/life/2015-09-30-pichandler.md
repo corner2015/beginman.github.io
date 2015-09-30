@@ -114,92 +114,27 @@ C程序如下，无成熟性和安全性 (囧!)
 
 执行`qn`立马会将目标文件统统上传至七牛服务器。那么接下来就开始引用链接了，看下美图吧：
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0180.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0211.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0211.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0229.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0229.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0244.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0244.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0381.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0404.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0388.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0422.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0395.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0506.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0404.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0536.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0422.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0551.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0434.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0674.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0482.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0688.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0497.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0804.jpg)
 
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0500.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0504.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0506.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0536.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0551.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0598.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0620.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0674.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0678.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0686.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0688.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0696.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0700.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0741.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0771.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0774.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0776.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0777.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0778.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0779.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0793.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0796.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0803.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0804.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0806.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0828.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0868.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0873.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0883.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0886.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0892.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0894.jpg)
-
-![](http://beginman.qiniudn.com/1509309151443608119DSC_0965.jpg)
+![](http://beginman.qiniudn.com/1509309151443608156DSC_0828.jpg)
