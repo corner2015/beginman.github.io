@@ -27,22 +27,20 @@ tagline:
       <li><a href="/" class="disabled">Previous</a></li>
   {% endif %}
 
-    <li>
+    
       {% if paginator.page == 1 %}
-        <a class="current-page" href="javascript:;">1</a>
+      <li class="disabled"><a class="current-page" href="javascript:;">1</a></li>
       {% else %}
-        <a href="/">1</a>
+        <li><a href="/">1</a></li>
       {% endif %}
-    </li>
 
     {% for count in (2..paginator.total_pages) %}
-      <li>
+      
         {% if count == paginator.page %}
-          <a class="current-page" href="javascript:;">{{ count }}</a>
+         <li class="disabled"><a class="current-page" href="javascript:;">{{ count }}</a></li>
         {% else %}
-          <a href="/page{{ count }}">{{ count }}</a>
+          <li><a href="/page{{ count }}">{{ count }}</a></li>
         {% endif %}
-      </li>
     {% endfor %}
 
   {% if paginator.next_page %}
