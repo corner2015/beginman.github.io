@@ -16,48 +16,43 @@ tagline:
 
 <!-- 导航分页链接 -->
 <div id="post-pagination" class="pagination">
+  <ul>
   {% if paginator.previous_page %}
-    <p class="previous">
       {% if paginator.previous_page == 1 %}
-        <a href="/">Previous</a>
+        <li><a href="/">Previous</a></li>
       {% else %}
-        <a href="{{ paginator.previous_page_path }}">Previous</a>
+        <li><a href="{{ paginator.previous_page_path }}">Previous</a></li>
       {% endif %}
-    </p>
   {% else %}
-    <p class="previous disabled">
-      <span>Previous</span>
-    </p>
+      <li><a href="/" class="disabled">Previous</a></li>
   {% endif %}
 
-  <ul class="pages">
-    <li class="page">
+    <li>
       {% if paginator.page == 1 %}
-        <span class="current-page">1</span>
+        <a class="current-page" href="javascript:;">1</a>
       {% else %}
         <a href="/">1</a>
       {% endif %}
     </li>
 
     {% for count in (2..paginator.total_pages) %}
-      <li class="page">
+      <li>
         {% if count == paginator.page %}
-          <span class="current-page">{{ count }}</span>
+          <a class="current-page" href="javascript:;">{{ count }}</a>
         {% else %}
           <a href="/page{{ count }}">{{ count }}</a>
         {% endif %}
       </li>
     {% endfor %}
-  </ul>
 
   {% if paginator.next_page %}
-    <p class="next">
+    <li class="next">
       <a href="{{ paginator.next_page_path }}">Next</a>
-    </p>
+    </li>
   {% else %}
-    <p class="next disabled">
+    <li class="next disabled">
       <span>Next</span>
-    </p>
+    </li>
   {% endif %}
-
+</ul>
 </div>
