@@ -32,6 +32,7 @@ group: navigation
 - ~~[完成] python生成器~~
 - [ ] python高级语法如(itertools)
 - [ ] python设计模式
+- ~~[ ] python多进程~~
 - [ ] python多线程
 - [ ] python网络编程
 
