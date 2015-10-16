@@ -58,6 +58,25 @@ IPv6地址用`sockaddr_in6`结构体表示，包括16位端口号、128位IP地�
 最高有效位（MSB：Most Significant Bit）存储于最高内存地址处；
 
 最低有效位（LSB：Lowest Significant Bit）存储于最低内存地址处。
+
+**快速记忆： 小端低低， 大端高高**
+
+比如整形十进制数字：305419896 ，转化为十六进制表示 : 0x12345678 。其中按着十六进制的话，每两位占8个字节。如图
+
+![](http://www.bysocket.com/wp-content/uploads/2015/10/iostream_thumb1.png)
+
+## 2.2 为什么有大小端模式之分呢
+
+在计算机系统中，我们是**以字节为单位，每个地址单元都对应着一个字节，一个字节为8bit**。但是在C语言中除了8bit的`char`之外，还有16bit的`short`型，32bit的`long`型（要看具体的编译器）。另外，对于位数大于8位的处理器，例如16位或者32位的处理器，由于寄存器宽度大于一个字节，那么必然存在着一个如果将多个字节安排的问题。因此就导致了大端存储模式和小端存储模式。
+
+知道为什么有模式的存在，下面需要了解下具有有什么应用场景：
+
+1、不同端模式的处理器进行数据传递时必须要考虑端模式的不同
+
+2、在网络上传输数据时，由于数据传输的两端对应不同的硬件平台，采用的存储字节顺序可能不一致。所以在TCP/IP协议规定了在网络上必须采用网络字节顺序，也就是大端模式。对于char型数据只占一个字节，无所谓大端和小端。而对于非char类型数据，必须在数据发送到网络上之前将其转换成大端模式。接收网络数据时按符合接受主机的环境接收。
+
+## 2.3 主机字节序与网络字节序
+
 ### 2.1.3 主机字节序
 不同的主机有不同的字节序，如x86为小端字节序，Motorola 6800为大端字节序，ARM字节序是可配置的。
 
@@ -133,4 +152,9 @@ IPv6地址用`sockaddr_in6`结构体表示，包括16位端口号、128位IP地�
 
 **即本主机是小端字节序，而经过`htonl`转换后为网络字节序，即大端。**
 
+参考：
+
+- [[《UNIX网络编程 卷1：套接字联网API（第3版）》](https://github.com/BeginMan/BookNotes/tree/master/Unix/Unix-Network-Programming-Volume-1-The-Sockets-Networking-API-3rd-Edition)]
+- [深入浅出： 大小端模式](http://blog.csdn.net/jeffli1993/article/details/49130947)
+- [UNIX网络编程——socket概述和字节序、地址转换函数](http://blog.csdn.net/ctthuangcheng/article/details/9407837)
 
