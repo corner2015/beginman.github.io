@@ -21,9 +21,11 @@ tags: [Unix网络编程]
 - socket API是一层抽象的网络编程接口，适用于各种底层网络协议，如IPv4、IPv6，以及以后要讲的UNIX Domain Socket。然而，各种网络协议的地址格式并不相同，如下图所示：
 ![](http://img.blog.csdn.net/20130722133529984?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvY3R0aHVuYWdjaG5lZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 
-IPv6地址用`sockaddr_in6`结构体表示，包括16位端口号、128位IP地址和一些控制字段。UNIX Domain Socket的地址格式定义在`sys/un.h`中，用sockaddr_un结构体表示。**各种socket地址结构体的开头都是相同的**，前16位表示整个结构体的长度（并不是所有UNIX的实现都有长度字段，如Linux就没有），后16位表示地址类型。IPv4、IPv6和UNIX Domain, Socket的地址类型分别定义为常数AF_INET、AF_INET6、AF_UNIX。
+IPv6地址用`sockaddr_in6`结构体表示，包括16位端口号、128位IP地址和一些控制字段。UNIX Domain Socket的地址格式定义在`sys/un.h`中，用sockaddr_un结构体表示。
 
-这样，只要取得某种sockaddr结构体的首地址，不需要知道具体是哪种类型的sockaddr结构体，就可以根据地址类型字段确定结构体中的内容。因此，socket API可以接受各种类型的sockaddr结构体指针做参数，例如`bind`、`accept`、`connect`等函数，**这些函数的参数应该设计成`void *`类型以便接受各种类型的指针，但是sock API的实现早于ANSI C标准化，那时还没有`void *`类型，因此这些函数的参数都用`struct sockaddr *`类型表示，即**通用地址结构**，如下所示：
+**各种socket地址结构体的开头都是相同的**，前16位表示整个结构体的长度（并不是所有UNIX的实现都有长度字段，如Linux就没有），后16位表示地址类型。IPv4、IPv6和UNIX Domain, Socket的地址类型分别定义为常数`AF_INET`、`AF_INET6`、`AF_UNIX`。
+
+这样，只要取得某种sockaddr结构体的首地址，不需要知道具体是哪种类型的sockaddr结构体，就可以根据地址类型字段确定结构体中的内容。因此，**socket API可以接受各种类型的sockaddr结构体指针做参数**，例如`bind`、`accept`、`connect`等函数，这些函数的参数应该设计成`void *`类型以便接受各种类型的指针，但是sock API的实现早于ANSI C标准化，那时还没有`void *`类型，因此这些函数的参数都用`struct sockaddr *`类型表示，即**通用地址结构**，如下所示：
 
 	struct sockaddr {  
 	        uint8_t      sa_len;  
